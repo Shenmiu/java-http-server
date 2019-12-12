@@ -2,6 +2,7 @@ package cn.edu.nju.nioserver.http;
 
 import cn.edu.nju.nioserver.core.message.IMessageReader;
 import cn.edu.nju.nioserver.core.message.IMessageReaderFactory;
+import cn.edu.nju.nioserver.core.message.MessageBuffer;
 
 /**
  * @author jjenkov
@@ -13,7 +14,7 @@ public class HttpMessageReaderFactory implements IMessageReaderFactory {
     }
 
     @Override
-    public IMessageReader createMessageReader() {
-        return new HttpMessageReader();
+    public IMessageReader createMessageReader(MessageBuffer readBuffer) {
+        return new HttpMessageReader(readBuffer);
     }
 }

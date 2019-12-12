@@ -21,15 +21,21 @@ public class Socket {
 
     public boolean endOfStreamReached = false;
 
+    /**
+     * 通过 socketChannel 构造 Socket
+     *
+     * @param socketChannel 新接受的链接
+     */
     public Socket(SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
     }
 
     /**
-     * 将数据从 Channel 读取到 buffer 中
+     * 将数据从 SocketChannel 读取到 ByteBuffer 中
+     *
      * @param byteBuffer 存数据的地方
-     * @return 读取的数据长度
-     * @throws IOException read 失败
+     * @return 读取的数据总字节数
+     * @throws IOException 读取失败
      */
     public int read(ByteBuffer byteBuffer) throws IOException {
         int bytesRead = this.socketChannel.read(byteBuffer);
@@ -46,6 +52,13 @@ public class Socket {
         return totalBytesRead;
     }
 
+    /**
+     * 将数据从 ByteBuffer 写入到 SocketChannel 中
+     *
+     * @param byteBuffer 保存数据的 ByteBuffer
+     * @return 写入的数据总字节数
+     * @throws IOException 写入失败
+     */
     public int write(ByteBuffer byteBuffer) throws IOException {
         int bytesWritten = this.socketChannel.write(byteBuffer);
         int totalBytesWritten = bytesWritten;

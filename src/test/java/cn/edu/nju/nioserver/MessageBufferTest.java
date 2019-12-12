@@ -16,14 +16,14 @@ public class MessageBufferTest {
 
         MessageBuffer messageBuffer = new MessageBuffer();
 
-        Message message = messageBuffer.getMessage();
+        Message message = messageBuffer.newMessage();
 
         assertNotNull(message);
         assertEquals(0, message.offset);
         assertEquals(0, message.length);
         assertEquals(4 * 1024, message.capacity);
 
-        Message message2 = messageBuffer.getMessage();
+        Message message2 = messageBuffer.newMessage();
 
         assertNotNull(message2);
         assertEquals(4096, message2.offset);
@@ -39,9 +39,9 @@ public class MessageBufferTest {
     public void testExpandMessage() {
         MessageBuffer messageBuffer = new MessageBuffer();
 
-        Message message = messageBuffer.getMessage();
+        Message message = messageBuffer.newMessage();
 
-        byte[] smallSharedArray = message.sharedArray;
+        byte[] smallSharedArray = message.sharedBuffer;
 
         assertNotNull(message);
         assertEquals(0, message.offset);
@@ -53,7 +53,7 @@ public class MessageBufferTest {
         assertEquals(0, message.length);
         assertEquals(128 * 1024, message.capacity);
 
-        byte[] mediumSharedArray = message.sharedArray;
+        byte[] mediumSharedArray = message.sharedBuffer;
         assertNotSame(smallSharedArray, mediumSharedArray);
 
         messageBuffer.expandMessage(message);
@@ -61,7 +61,7 @@ public class MessageBufferTest {
         assertEquals(0, message.length);
         assertEquals(1024 * 1024, message.capacity);
 
-        byte[] largeSharedArray = message.sharedArray;
+        byte[] largeSharedArray = message.sharedBuffer;
         assertNotSame(smallSharedArray, largeSharedArray);
         assertNotSame(mediumSharedArray, largeSharedArray);
 
@@ -70,7 +70,7 @@ public class MessageBufferTest {
         assertEquals(0, message.offset);
         assertEquals(0, message.length);
         assertEquals(1024 * 1024, message.capacity);
-        assertSame(message.sharedArray, largeSharedArray);
+        assertSame(message.sharedBuffer, largeSharedArray);
 
 
     }

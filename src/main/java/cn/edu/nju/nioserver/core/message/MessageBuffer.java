@@ -1,7 +1,5 @@
 package cn.edu.nju.nioserver.core.message;
 
-import cn.edu.nju.nioserver.core.QueueIntFlip;
-
 /**
  * A shared buffer which can contain many messages inside. A message gets a section of the buffer to use. If the
  * message outgrows the section in size, the message requests a larger section and the message is copied to that
@@ -14,39 +12,47 @@ import cn.edu.nju.nioserver.core.QueueIntFlip;
  */
 public class MessageBuffer {
 
-    public final static int KB = 1024;
-    public final static int MB = 1024 * KB;
+    public static final int KB = 1024;
 
-    private static final int CAPACITY_SMALL = 4 * KB;
-    private static final int CAPACITY_MEDIUM = 128 * KB;
-    private static final int CAPACITY_LARGE = 1024 * KB;
+    /**
+     * 小、中、大缓存块大小
+     */
+    public static final int CAPACITY_SMALL = 4 * KB;
+    public static final int CAPACITY_MEDIUM = 128 * KB;
+    public static final int CAPACITY_LARGE = 1024 * KB;
 
-    //package scope (default) - so they can be accessed from unit tests.
     /**
-     * 1024 x   4KB messages =  4MB.
+     * 小、中、大缓存块的个数
      */
-    public byte[] smallMessageBuffer = new byte[1024 * 4 * KB];
+    private static final int SECTION_SMALL = 1024;
+    private static final int SECTION_MEDIUM = 128;
+    private static final int SECTION_LARGE = 16;
+
     /**
-     * 128 x 128KB messages = 16MB.
+     * 1024 * 4KB messages =  4MB.
      */
-    public byte[] mediumMessageBuffer = new byte[128 * 128 * KB];
+    public byte[] smallMessageBuffer = new byte[SECTION_SMALL * CAPACITY_SMALL];
+    /**
+     * 128 * 128KB messages = 16MB.
+     */
+    public byte[] mediumMessageBuffer = new byte[SECTION_MEDIUM * CAPACITY_MEDIUM];
     /**
      * 16 * 1MB messages = 16MB.
      */
-    public byte[] largeMessageBuffer = new byte[16 * MB];
+    public byte[] largeMessageBuffer = new byte[SECTION_LARGE * CAPACITY_LARGE];
 
     /**
      * 1024 free sections
      */
-    QueueIntFlip smallMessageBufferFreeBlocks = new QueueIntFlip(1024);
+    QueueIntFlip smallMessageBufferFreeBlocks = new QueueIntFlip(SECTION_SMALL);
     /**
      * 128 free sections
      */
-    QueueIntFlip mediumMessageBufferFreeBlocks = new QueueIntFlip(128);
+    QueueIntFlip mediumMessageBufferFreeBlocks = new QueueIntFlip(SECTION_MEDIUM);
     /**
      * 16 free sections
      */
-    QueueIntFlip largeMessageBufferFreeBlocks = new QueueIntFlip(16);
+    QueueIntFlip largeMessageBufferFreeBlocks = new QueueIntFlip(SECTION_LARGE);
 
     //todo make all message buffer capacities and block sizes configurable
     //todo calculate free block queue sizes based on capacity and block size of buffers.
@@ -64,22 +70,21 @@ public class MessageBuffer {
         }
     }
 
-    public Message getMessage() {
+    /**
+     * 在共享缓存区域分配一个新的 message 块
+     *
+     * @return 新的 Message 对象
+     */
+    public Message newMessage() {
         int nextFreeSmallBlock = this.smallMessageBufferFreeBlocks.take();
 
         if (nextFreeSmallBlock == -1) {
+            // todo 没读取到 message 应该抛出一个异常
             return null;
         }
 
         //todo get from Message pool - caps memory usage.
-        Message message = new Message(this);
-
-        message.sharedArray = this.smallMessageBuffer;
-        message.capacity = CAPACITY_SMALL;
-        message.offset = nextFreeSmallBlock;
-        message.length = 0;
-
-        return message;
+        return new Message(this, nextFreeSmallBlock, 0);
     }
 
     public boolean expandMessage(Message message) {
@@ -98,16 +103,15 @@ public class MessageBuffer {
             return false;
         }
 
-        System.arraycopy(message.sharedArray, message.offset, dest, nextFreeBlock, message.length);
+        System.arraycopy(message.sharedBuffer, message.offset, dest, nextFreeBlock, message.length);
 
         //free smaller block after copy
         srcBlockQueue.put(message.offset);
 
-        message.sharedArray = dest;
+        message.sharedBuffer = dest;
         message.offset = nextFreeBlock;
         message.capacity = newCapacity;
         return true;
     }
-
 
 }

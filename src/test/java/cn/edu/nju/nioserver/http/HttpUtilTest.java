@@ -1,5 +1,6 @@
 package cn.edu.nju.nioserver.http;
 
+import manifold.ext.api.Jailbreak;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -11,6 +12,8 @@ import static org.junit.Assert.assertEquals;
  * Created by jjenkov on 19-10-2015.
  */
 public class HttpUtilTest {
+
+    @Jailbreak HttpUtil httpUtil = new HttpUtil();
 
     @Test
     public void testResolveHttpMethod() throws UnsupportedEncodingException {
@@ -76,6 +79,14 @@ public class HttpUtilTest {
         assertEquals(5, httpHeaders.contentLength);
         assertEquals(37, httpHeaders.bodyStartIndex);
         assertEquals(42, httpHeaders.bodyEndIndex);
+    }
+
+    @Test
+    public void testFindContentLength() throws UnsupportedEncodingException {
+        @Jailbreak HttpUtil httpUtil = null;
+        String contentLength = "Content-Length: 200\r\n";
+        int res = httpUtil.findContentLength(contentLength.getBytes(StandardCharsets.UTF_8), 0, contentLength.length() - 1);
+        assertEquals(res, 200);
     }
 
 

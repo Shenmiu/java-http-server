@@ -29,7 +29,7 @@ public class Main {
         IMessageProcessor messageProcessor = (request, writeProxy) -> {
             System.out.println("Message Received from socket: " + request.socketId);
 
-            Message response = writeProxy.getMessage();
+            Message response = writeProxy.newResponse();
             response.socketId = request.socketId;
             response.writeToMessage(httpResponseBytes);
 

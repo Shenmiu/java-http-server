@@ -8,14 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 负责向 SocketChannel 中写消息
  *
  * @author jjenkov
  * @date 21-10-2015
  */
 public class MessageWriter {
 
+    /**
+     * 保存该 SocketChannel 应该要传送的消息
+     */
     private List<Message> writeQueue = new ArrayList<>();
+    /**
+     * 保存当前正在传送的消息
+     */
     private Message messageInProgress = null;
+    /**
+     * 记录当前已经写了多少个字节了
+     */
     private int bytesWritten = 0;
 
     public MessageWriter() {
@@ -30,7 +40,7 @@ public class MessageWriter {
     }
 
     public void write(Socket socket, ByteBuffer byteBuffer) throws IOException {
-        byteBuffer.put(this.messageInProgress.sharedArray, this.messageInProgress.offset + this.bytesWritten, this.messageInProgress.length - this.bytesWritten);
+        byteBuffer.put(this.messageInProgress.sharedBuffer, this.messageInProgress.offset + this.bytesWritten, this.messageInProgress.length - this.bytesWritten);
         byteBuffer.flip();
 
         this.bytesWritten += socket.write(byteBuffer);
@@ -41,7 +51,6 @@ public class MessageWriter {
                 this.messageInProgress = this.writeQueue.remove(0);
             } else {
                 this.messageInProgress = null;
-                //todo unregister from selector
             }
         }
     }

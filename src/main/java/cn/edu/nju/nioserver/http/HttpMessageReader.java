@@ -16,18 +16,17 @@ import java.util.List;
  */
 public class HttpMessageReader implements IMessageReader {
 
-    private MessageBuffer messageBuffer = null;
+    /**
+     * 共享缓存
+     */
+    private MessageBuffer messageBuffer;
 
     private List<Message> completeMessages = new ArrayList<>();
-    private Message nextMessage = null;
+    private Message nextMessage;
 
-    public HttpMessageReader() {
-    }
-
-    @Override
-    public void init(MessageBuffer readMessageBuffer) {
+    public HttpMessageReader(MessageBuffer readMessageBuffer) {
         this.messageBuffer = readMessageBuffer;
-        this.nextMessage = messageBuffer.getMessage();
+        this.nextMessage = messageBuffer.newMessage();
         this.nextMessage.metaData = new HttpHeaders();
     }
 
@@ -43,9 +42,9 @@ public class HttpMessageReader implements IMessageReader {
 
         this.nextMessage.writeToMessage(byteBuffer);
 
-        int endIndex = HttpUtil.parseHttpRequest(this.nextMessage.sharedArray, this.nextMessage.offset, this.nextMessage.offset + this.nextMessage.length, (HttpHeaders) this.nextMessage.metaData);
+        int endIndex = HttpUtil.parseHttpRequest(this.nextMessage.sharedBuffer, this.nextMessage.offset, this.nextMessage.offset + this.nextMessage.length, (HttpHeaders) this.nextMessage.metaData);
         if (endIndex != -1) {
-            Message message = this.messageBuffer.getMessage();
+            Message message = this.messageBuffer.newMessage();
             message.metaData = new HttpHeaders();
 
             message.writePartialMessageToMessage(nextMessage, endIndex);

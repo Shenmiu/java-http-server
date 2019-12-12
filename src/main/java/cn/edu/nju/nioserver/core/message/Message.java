@@ -12,24 +12,31 @@ public class Message {
      * the id of source socket or destination socket, depending on whether is going in or out.
      */
     public long socketId = 0;
-    public byte[] sharedArray = null;
     /**
-     * offset into sharedArray where this message data starts.
+     * 该条信息所存储的共享缓存
      */
-    public int offset = 0;
+    public byte[] sharedBuffer;
     /**
-     * the size of the section in the sharedArray allocated to this message.
+     * 该信息在共享缓存中的偏移量
      */
-    public int capacity = 0;
+    public int offset;
+    /**
+     * 该信息块的大小
+     */
+    public int capacity;
     /**
      * the number of bytes used of the allocated section.
      */
-    public int length = 0;
+    public int length;
     public Object metaData = null;
     private MessageBuffer messageBuffer;
 
-    public Message(MessageBuffer messageBuffer) {
+    public Message(MessageBuffer messageBuffer, int offset, int length) {
         this.messageBuffer = messageBuffer;
+        this.sharedBuffer = messageBuffer.smallMessageBuffer;
+        this.capacity = MessageBuffer.CAPACITY_SMALL;
+        this.offset = offset;
+        this.length = length;
     }
 
     /**
@@ -48,7 +55,7 @@ public class Message {
         }
 
         int bytesToCopy = Math.min(remaining, this.capacity - this.length);
-        byteBuffer.get(this.sharedArray, this.offset + this.length, bytesToCopy);
+        byteBuffer.get(this.sharedBuffer, this.offset + this.length, bytesToCopy);
         this.length += bytesToCopy;
 
         return bytesToCopy;
@@ -82,7 +89,7 @@ public class Message {
         }
 
         int bytesToCopy = Math.min(remaining, this.capacity - this.length);
-        System.arraycopy(byteArray, offset, this.sharedArray, this.offset + this.length, bytesToCopy);
+        System.arraycopy(byteArray, offset, this.sharedBuffer, this.offset + this.length, bytesToCopy);
         this.length += bytesToCopy;
         return bytesToCopy;
     }
@@ -99,11 +106,7 @@ public class Message {
         int startIndexOfPartialMessage = message.offset + endIndex;
         int lengthOfPartialMessage = (message.offset + message.length) - endIndex;
 
-        System.arraycopy(message.sharedArray, startIndexOfPartialMessage, this.sharedArray, this.offset, lengthOfPartialMessage);
-    }
-
-    public int writeToByteBuffer(ByteBuffer byteBuffer) {
-        return 0;
+        System.arraycopy(message.sharedBuffer, startIndexOfPartialMessage, this.sharedBuffer, this.offset, lengthOfPartialMessage);
     }
 
 }

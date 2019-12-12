@@ -21,6 +21,9 @@ public class Server {
     private int tcpPort;
     private IMessageReaderFactory messageReaderFactory;
     private IMessageProcessor messageProcessor;
+    /**
+     * 保存新接受的连接生成的 Socket 对象
+     */
     private Queue<Socket> socketQueue;
 
     /**

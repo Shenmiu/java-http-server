@@ -19,12 +19,23 @@ public class WriteProxy {
         this.writeQueue = writeQueue;
     }
 
-    public Message getMessage() {
-        return this.messageBuffer.getMessage();
+    /**
+     * 获取一个空的响应对象
+     *
+     * @return Message 对象
+     */
+    public Message newResponse() {
+        return this.messageBuffer.newMessage();
     }
 
-    public boolean enqueue(Message message) {
-        return this.writeQueue.offer(message);
+    /**
+     * 将响应放入 outbound 队列中
+     *
+     * @param response 响应
+     * @return 加入队列是否成功
+     */
+    public boolean enqueue(Message response) {
+        return this.writeQueue.offer(response);
     }
 
 }

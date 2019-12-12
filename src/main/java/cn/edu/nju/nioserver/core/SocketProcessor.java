@@ -15,6 +15,9 @@ import java.util.*;
  */
 public class SocketProcessor implements Runnable {
 
+    /**
+     * 保存有新接受连接的 Socket 对象
+     */
     private Queue<Socket> inboundSocketQueue;
 
     /**
@@ -90,23 +93,33 @@ public class SocketProcessor implements Runnable {
         }
     }
 
-
-    public void executeCycle() throws IOException {
+    /**
+     * SocketProcessor 的执行循环
+     * 1. 拿取新的 Socket 对象
+     * 2. 从 Socket 对象中读取数据
+     * 3. 将响应队列中的消息写回到对应的
+     *
+     * @throws IOException
+     */
+    private void executeCycle() throws IOException {
         takeNewSockets();
         readFromSockets();
         writeToSockets();
     }
 
-
-    public void takeNewSockets() throws IOException {
+    /**
+     * 从 inboundSocket 队列中拿取未处理的 Socket 对象
+     *
+     * @throws IOException IO 异常
+     */
+    private void takeNewSockets() throws IOException {
         Socket newSocket = this.inboundSocketQueue.poll();
 
         while (newSocket != null) {
             newSocket.socketId = this.nextSocketId++;
             newSocket.socketChannel.configureBlocking(false);
 
-            newSocket.messageReader = this.messageReaderFactory.createMessageReader();
-            newSocket.messageReader.init(this.readMessageBuffer);
+            newSocket.messageReader = this.messageReaderFactory.createMessageReader(readMessageBuffer);
 
             newSocket.messageWriter = new MessageWriter();
 
@@ -120,7 +133,7 @@ public class SocketProcessor implements Runnable {
     }
 
 
-    public void readFromSockets() throws IOException {
+    private void readFromSockets() throws IOException {
         int readReady = this.readSelector.selectNow();
 
         if (readReady > 0) {
@@ -162,7 +175,7 @@ public class SocketProcessor implements Runnable {
     }
 
 
-    public void writeToSockets() throws IOException {
+    private void writeToSockets() throws IOException {
 
         // Take all new messages from outboundMessageQueue
         takeNewOutboundMessages();
@@ -199,20 +212,22 @@ public class SocketProcessor implements Runnable {
         }
     }
 
+    /**
+     * 将该 Socket 中的 SocketChannel 在 writeSelector 上取消注册
+     */
+    private void cancelEmptySockets() {
+        for (Socket socket : nonEmptyToEmptySockets) {
+            SelectionKey key = socket.socketChannel.keyFor(this.writeSelector);
+            key.cancel();
+        }
+        nonEmptyToEmptySockets.clear();
+    }
+
     private void registerNonEmptySockets() throws ClosedChannelException {
         for (Socket socket : emptyToNonEmptySockets) {
             socket.socketChannel.register(this.writeSelector, SelectionKey.OP_WRITE, socket);
         }
         emptyToNonEmptySockets.clear();
-    }
-
-    private void cancelEmptySockets() {
-        for (Socket socket : nonEmptyToEmptySockets) {
-            SelectionKey key = socket.socketChannel.keyFor(this.writeSelector);
-
-            key.cancel();
-        }
-        nonEmptyToEmptySockets.clear();
     }
 
     private void takeNewOutboundMessages() {

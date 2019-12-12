@@ -2,7 +2,6 @@ package cn.edu.nju.nioserver.core;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Queue;
@@ -16,7 +15,6 @@ import java.util.Queue;
 public class SocketAccepter implements Runnable {
 
     private int tcpPort;
-    private ServerSocketChannel serverSocket = null;
 
     private Queue<Socket> socketQueue;
 
@@ -27,9 +25,10 @@ public class SocketAccepter implements Runnable {
 
     @Override
     public void run() {
+        ServerSocketChannel serverSocket;
         try {
-            this.serverSocket = ServerSocketChannel.open();
-            this.serverSocket.bind(new InetSocketAddress("localhost", tcpPort));
+            serverSocket = ServerSocketChannel.open();
+            serverSocket.bind(new InetSocketAddress(tcpPort));
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -37,12 +36,9 @@ public class SocketAccepter implements Runnable {
 
         while (true) {
             try {
-                SocketChannel socketChannel = this.serverSocket.accept();
+                SocketChannel socketChannel = serverSocket.accept();
                 if (socketChannel != null) {
                     System.out.println("Socket accepted: " + socketChannel);
-
-                    //todo check if the queue can even accept more sockets.
-                    // 通过 socketChannel 构造 Socket
                     this.socketQueue.add(new Socket(socketChannel));
                 }
             } catch (IOException e) {

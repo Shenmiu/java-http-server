@@ -1,9 +1,8 @@
 package cn.edu.nju.nioserver.http;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
 /**
+ * HTTP 请求解析工具类
+ *
  * @author jjenkov
  * @date 19-10-2015
  */
@@ -18,23 +17,24 @@ public class HttpUtil {
     private static final byte[] HOST = new byte[]{'H', 'o', 's', 't'};
     private static final byte[] CONTENT_LENGTH = new byte[]{'C', 'o', 'n', 't', 'e', 'n', 't', '-', 'L', 'e', 'n', 'g', 't', 'h'};
 
+    /**
+     * 解析 HTTP 请求
+     *
+     * @param src         保存 HTTP 请求的数据源
+     * @param startIndex  该 HTTP 请求的起始位置
+     * @param endIndex    该 HTTP 请求的结束位置
+     * @param httpHeaders 保存 HTTP 请求的元数据
+     * @return 该 HTTP 请求的结束位置，若解析失败返回 -1
+     */
     public static int parseHttpRequest(byte[] src, int startIndex, int endIndex, HttpHeaders httpHeaders) {
 
-
-        /*
-        int endOfHttpMethod = findNext(src, startIndex, endIndex, (byte) ' ');
-        if(endOfHttpMethod == -1) return false;
-        resolveHttpMethod(src, startIndex, httpHeaders);
-        */
-
-        //parse HTTP request line
+        // 解析请求行
         int endOfFirstLine = findNextLineBreak(src, startIndex, endIndex);
         if (endOfFirstLine == -1) {
             return -1;
         }
 
-
-        //parse HTTP headers
+        // 解析请求头
         int prevEndOfHeader = endOfFirstLine + 1;
         int endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
 
@@ -42,11 +42,7 @@ public class HttpUtil {
         while (endOfHeader != -1 && endOfHeader != prevEndOfHeader + 1) {
 
             if (matches(src, prevEndOfHeader, CONTENT_LENGTH)) {
-                try {
-                    findContentLength(src, prevEndOfHeader, endIndex, httpHeaders);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                httpHeaders.contentLength = findContentLength(src, prevEndOfHeader, endIndex);
             }
 
             prevEndOfHeader = endOfHeader + 1;
@@ -68,22 +64,29 @@ public class HttpUtil {
             return bodyEndIndex;
         }
 
-
         return -1;
     }
 
-    private static void findContentLength(byte[] src, int startIndex, int endIndex, HttpHeaders httpHeaders) throws UnsupportedEncodingException {
+    /**
+     * 计算 ContentLength 的大小
+     *
+     * @param src         数据源
+     * @param startIndex  ContentLength 请求头的开始索引
+     * @param endIndex    ContentLength 请求头的结束索引(include)
+     * @return ContentLength 的值
+     */
+    private static int findContentLength(byte[] src, int startIndex, int endIndex) {
         int indexOfColon = findNext(src, startIndex, endIndex, (byte) ':');
 
-        //skip spaces after colon
+        // 跳过 ":" 之后的空格
         int index = indexOfColon + 1;
         while (src[index] == ' ') {
             index++;
         }
 
-        int valueStartIndex = index;
-        int valueEndIndex = index;
         boolean endOfValueFound = false;
+
+        int contentLength = 0;
 
         while (index < endIndex && !endOfValueFound) {
             switch (src[index]) {
@@ -97,23 +100,21 @@ public class HttpUtil {
                 case '7':
                 case '8':
                 case '9': {
+                    contentLength = contentLength * 10 + ((char) src[index] - '0');
                     index++;
                     break;
                 }
 
                 default: {
                     endOfValueFound = true;
-                    valueEndIndex = index;
                 }
             }
         }
 
-        httpHeaders.contentLength = Integer.parseInt(new String(src, valueStartIndex, valueEndIndex - valueStartIndex, StandardCharsets.UTF_8));
-
+        return contentLength;
     }
 
-
-    public static int findNext(byte[] src, int startIndex, int endIndex, byte value) {
+    private static int findNext(byte[] src, int startIndex, int endIndex, byte value) {
         for (int index = startIndex; index < endIndex; index++) {
             if (src[index] == value) {
                 return index;
@@ -126,8 +127,8 @@ public class HttpUtil {
      * 查找行间隔符
      *
      * @param src        数据
-     * @param startIndex start
-     * @param endIndex   end
+     * @param startIndex 开始索引
+     * @param endIndex   结束索引(exclude)
      * @return 行间隔符的位置，如果不存在则返回 -1
      */
     public static int findNextLineBreak(byte[] src, int startIndex, int endIndex) {
@@ -159,7 +160,15 @@ public class HttpUtil {
         }
     }
 
-    public static boolean matches(byte[] src, int offset, byte[] value) {
+    /**
+     * 用于比较数据源中的数据和相应的字段是否相同
+     *
+     * @param src    数据源
+     * @param offset 比较数据的偏移量
+     * @param value  用于对比的字段
+     * @return 是否相同
+     */
+    private static boolean matches(byte[] src, int offset, byte[] value) {
         for (int i = offset, n = 0; n < value.length; i++, n++) {
             if (src[i] != value[n]) {
                 return false;

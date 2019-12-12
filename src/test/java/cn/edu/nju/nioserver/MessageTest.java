@@ -20,7 +20,7 @@ public class MessageTest {
     public void testWriteToMessage() {
         MessageBuffer messageBuffer = new MessageBuffer();
 
-        Message message = messageBuffer.getMessage();
+        Message message = messageBuffer.newMessage();
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024 * 1024);
 
         fill(byteBuffer, 4096);
@@ -28,19 +28,19 @@ public class MessageTest {
         int written = message.writeToMessage(byteBuffer);
         assertEquals(4096, written);
         assertEquals(4096, message.length);
-        assertSame(messageBuffer.smallMessageBuffer, message.sharedArray);
+        assertSame(messageBuffer.smallMessageBuffer, message.sharedBuffer);
 
         fill(byteBuffer, 124 * 1024);
         written = message.writeToMessage(byteBuffer);
         assertEquals(124 * 1024, written);
         assertEquals(128 * 1024, message.length);
-        assertSame(messageBuffer.mediumMessageBuffer, message.sharedArray);
+        assertSame(messageBuffer.mediumMessageBuffer, message.sharedBuffer);
 
         fill(byteBuffer, (1024 - 128) * 1024);
         written = message.writeToMessage(byteBuffer);
         assertEquals(896 * 1024, written);
         assertEquals(1024 * 1024, message.length);
-        assertSame(messageBuffer.largeMessageBuffer, message.sharedArray);
+        assertSame(messageBuffer.largeMessageBuffer, message.sharedBuffer);
 
         fill(byteBuffer, 1);
         written = message.writeToMessage(byteBuffer);

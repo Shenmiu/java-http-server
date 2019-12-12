@@ -10,10 +10,11 @@ package cn.edu.nju.nioserver.core.message;
 public interface IMessageReaderFactory {
 
     /**
-     * 创建 Message Reader
+     * 创建具体的 MessageReader
      *
+     * @param readBuffer MessageReader 需要的共享缓存
      * @return Message Reader
      */
-    IMessageReader createMessageReader();
+    IMessageReader createMessageReader(MessageBuffer readBuffer);
 
 }
