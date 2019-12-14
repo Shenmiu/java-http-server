@@ -23,46 +23,46 @@ public class HttpUtil {
      * @param src         保存 HTTP 请求的数据源
      * @param startIndex  该 HTTP 请求的起始位置
      * @param endIndex    该 HTTP 请求的结束位置
-     * @param httpHeaders 保存 HTTP 请求的元数据
+     * @param request 保存 HTTP 请求的元数据
      * @return 该 HTTP 请求的结束位置，若解析失败返回 -1
      */
-    public static int parseHttpRequest(byte[] src, int startIndex, int endIndex, HttpHeaders httpHeaders) {
+    public static int parseHttpRequest(byte[] src, int startIndex, int endIndex, HttpRequest request) {
 
-        // 解析请求行
-        int endOfFirstLine = findNextLineBreak(src, startIndex, endIndex);
-        if (endOfFirstLine == -1) {
-            return -1;
-        }
-
-        // 解析请求头
-        int prevEndOfHeader = endOfFirstLine + 1;
-        int endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
-
-        //prevEndOfHeader + 1 = end of previous header + 2 (+2 = CR + LF)
-        while (endOfHeader != -1 && endOfHeader != prevEndOfHeader + 1) {
-
-            if (matches(src, prevEndOfHeader, CONTENT_LENGTH)) {
-                httpHeaders.contentLength = findContentLength(src, prevEndOfHeader, endIndex);
-            }
-
-            prevEndOfHeader = endOfHeader + 1;
-            endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
-        }
-
-        if (endOfHeader == -1) {
-            return -1;
-        }
-
-        //check that byte array contains full HTTP message.
-        int bodyStartIndex = endOfHeader + 1;
-        int bodyEndIndex = bodyStartIndex + httpHeaders.contentLength;
-
-        if (bodyEndIndex <= endIndex) {
-            //byte array contains a full HTTP request
-            httpHeaders.bodyStartIndex = bodyStartIndex;
-            httpHeaders.bodyEndIndex = bodyEndIndex;
-            return bodyEndIndex;
-        }
+//        // 解析请求行
+//        int endOfFirstLine = findNextLineBreak(src, startIndex, endIndex);
+//        if (endOfFirstLine == -1) {
+//            return -1;
+//        }
+//
+//        // 解析请求头
+//        int prevEndOfHeader = endOfFirstLine + 1;
+//        int endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
+//
+//        //prevEndOfHeader + 1 = end of previous header + 2 (+2 = CR + LF)
+//        while (endOfHeader != -1 && endOfHeader != prevEndOfHeader + 1) {
+//
+//            if (matches(src, prevEndOfHeader, CONTENT_LENGTH)) {
+//                httpHeaders.contentLength = findContentLength(src, prevEndOfHeader, endIndex);
+//            }
+//
+//            prevEndOfHeader = endOfHeader + 1;
+//            endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
+//        }
+//
+//        if (endOfHeader == -1) {
+//            return -1;
+//        }
+//
+//        //check that byte array contains full HTTP message.
+//        int bodyStartIndex = endOfHeader + 1;
+//        int bodyEndIndex = bodyStartIndex + httpHeaders.contentLength;
+//
+//        if (bodyEndIndex <= endIndex) {
+//            //byte array contains a full HTTP request
+//            httpHeaders.bodyStartIndex = bodyStartIndex;
+//            httpHeaders.bodyEndIndex = bodyEndIndex;
+//            return bodyEndIndex;
+//        }
 
         return -1;
     }
@@ -70,9 +70,9 @@ public class HttpUtil {
     /**
      * 计算 ContentLength 的大小
      *
-     * @param src         数据源
-     * @param startIndex  ContentLength 请求头的开始索引
-     * @param endIndex    ContentLength 请求头的结束索引(include)
+     * @param src        数据源
+     * @param startIndex ContentLength 请求头的开始索引
+     * @param endIndex   ContentLength 请求头的结束索引(include)
      * @return ContentLength 的值
      */
     private static int findContentLength(byte[] src, int startIndex, int endIndex) {
@@ -143,21 +143,21 @@ public class HttpUtil {
     }
 
     public static void resolveHttpMethod(byte[] src, int startIndex, HttpHeaders httpHeaders) {
-        if (matches(src, startIndex, GET)) {
-            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_GET;
-        }
-        if (matches(src, startIndex, POST)) {
-            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_POST;
-        }
-        if (matches(src, startIndex, PUT)) {
-            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_PUT;
-        }
-        if (matches(src, startIndex, HEAD)) {
-            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_HEAD;
-        }
-        if (matches(src, startIndex, DELETE)) {
-            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_DELETE;
-        }
+//        if (matches(src, startIndex, GET)) {
+//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_GET;
+//        }
+//        if (matches(src, startIndex, POST)) {
+//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_POST;
+//        }
+//        if (matches(src, startIndex, PUT)) {
+//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_PUT;
+//        }
+//        if (matches(src, startIndex, HEAD)) {
+//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_HEAD;
+//        }
+//        if (matches(src, startIndex, DELETE)) {
+//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_DELETE;
+//        }
     }
 
     /**

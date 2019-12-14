@@ -3,6 +3,7 @@ package cn.edu.nju.nioserver.example;
 import cn.edu.nju.nioserver.core.Server;
 import cn.edu.nju.nioserver.core.message.IMessageProcessor;
 import cn.edu.nju.nioserver.core.message.Message;
+import cn.edu.nju.nioserver.http.HttpHeaders;
 import cn.edu.nju.nioserver.http.HttpMessageReaderFactory;
 
 import java.io.IOException;
