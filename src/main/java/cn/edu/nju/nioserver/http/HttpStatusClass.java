@@ -50,6 +50,16 @@ public enum HttpStatusClass {
         }
     };
 
+    private final int min;
+    private final int max;
+    private final String defaultReasonPhrase;
+
+    HttpStatusClass(int min, int max, String defaultReasonPhrase) {
+        this.min = min;
+        this.max = max;
+        this.defaultReasonPhrase = defaultReasonPhrase;
+    }
+
     /**
      * Returns the class of the specified HTTP status code.
      */
@@ -74,13 +84,14 @@ public enum HttpStatusClass {
 
     /**
      * Returns the class of the specified HTTP status code.
+     *
      * @param code Just the numeric portion of the http status code.
      */
     public static HttpStatusClass valueOf(CharSequence code) {
         if (code != null && code.length() == 3) {
             char c0 = code.charAt(0);
             return isDigit(c0) && isDigit(code.charAt(1)) && isDigit(code.charAt(2)) ? valueOf(digit(c0) * 100)
-                                                                                     : UNKNOWN;
+                    : UNKNOWN;
         }
         return UNKNOWN;
     }
@@ -91,16 +102,6 @@ public enum HttpStatusClass {
 
     private static boolean isDigit(char c) {
         return c >= '0' && c <= '9';
-    }
-
-    private final int min;
-    private final int max;
-    private final String defaultReasonPhrase;
-
-    HttpStatusClass(int min, int max, String defaultReasonPhrase) {
-        this.min = min;
-        this.max = max;
-        this.defaultReasonPhrase = defaultReasonPhrase;
     }
 
     /**

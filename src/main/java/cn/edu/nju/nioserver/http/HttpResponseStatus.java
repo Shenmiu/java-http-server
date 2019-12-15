@@ -313,8 +313,39 @@ public class HttpResponseStatus implements Comparable<HttpResponseStatus> {
 
     private final int code;
     private final String codeAsText;
-    private HttpStatusClass codeClass;
     private final String reasonPhrase;
+    private HttpStatusClass codeClass;
+
+    /**
+     * Creates a new instance with the specified {@code code} and the auto-generated default reason phrase.
+     */
+    private HttpResponseStatus(int code) {
+        this(code, HttpStatusClass.valueOf(code).defaultReasonPhrase() + " (" + code + ')');
+    }
+
+    private HttpResponseStatus(int code, String reasonPhrase) {
+        if (code < 0) {
+            throw new IllegalArgumentException("code:" + code + " is invalid");
+        }
+        if (reasonPhrase == null || reasonPhrase.isEmpty()) {
+            throw new IllegalArgumentException("reasonPhrase is invalid" + reasonPhrase);
+        }
+
+        for (int i = 0; i < reasonPhrase.length(); i++) {
+            char c = reasonPhrase.charAt(i);
+            switch (c) {
+                case '\n':
+                case '\r':
+                    throw new IllegalArgumentException(
+                            "reasonPhrase contains one of the following prohibited characters: " +
+                                    "\\r\\n: " + reasonPhrase);
+            }
+        }
+
+        this.code = code;
+        codeAsText = Integer.toString(code);
+        this.reasonPhrase = reasonPhrase;
+    }
 
     private static HttpResponseStatus newStatus(int statusCode, String reasonPhrase) {
         return new HttpResponseStatus(statusCode, reasonPhrase);
@@ -478,37 +509,6 @@ public class HttpResponseStatus implements Comparable<HttpResponseStatus> {
         } catch (Exception e) {
             throw new IllegalArgumentException("malformed status line: " + line, e);
         }
-    }
-
-    /**
-     * Creates a new instance with the specified {@code code} and the auto-generated default reason phrase.
-     */
-    private HttpResponseStatus(int code) {
-        this(code, HttpStatusClass.valueOf(code).defaultReasonPhrase() + " (" + code + ')');
-    }
-
-    private HttpResponseStatus(int code, String reasonPhrase) {
-        if (code < 0) {
-            throw new IllegalArgumentException("code:" + code + " is invalid");
-        }
-        if (reasonPhrase == null || reasonPhrase.isEmpty()) {
-            throw new IllegalArgumentException("reasonPhrase is invalid" + reasonPhrase);
-        }
-
-        for (int i = 0; i < reasonPhrase.length(); i++) {
-            char c = reasonPhrase.charAt(i);
-            switch (c) {
-                case '\n':
-                case '\r':
-                    throw new IllegalArgumentException(
-                            "reasonPhrase contains one of the following prohibited characters: " +
-                                    "\\r\\n: " + reasonPhrase);
-            }
-        }
-
-        this.code = code;
-        codeAsText = Integer.toString(code);
-        this.reasonPhrase = reasonPhrase;
     }
 
     /**

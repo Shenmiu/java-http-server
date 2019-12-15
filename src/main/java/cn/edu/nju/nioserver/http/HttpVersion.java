@@ -6,44 +6,37 @@ import java.util.regex.Pattern;
 public class HttpVersion {
 
     /**
-     * Http1.1
-     */
-    private static final String HTTP_1_1_STRING = "HTTP/1.1";
-
-    /**
-     * 协议名称HTTP
-     */
-    private final String protocolName;
-
-    /**
-     * 主版本号
-     */
-    private final int majorVersion;
-
-    /**
-     * 副版本号
-     */
-    private final int minorVersion;
-
-    /**
-     * 实际version内容（未实现其他的）
-     */
-    private final String text;
-
-    /**
-     * 是否保持长连接（不知道是否要实现，先放在这里）
-     */
-    private final boolean keepAliveDefault;
-
-    /**
      * HTTP/1.1
      */
     public static final HttpVersion HTTP_1_1 = new HttpVersion("HTTP", 1, 1, true);
-
+    /**
+     * Http1.1
+     */
+    private static final String HTTP_1_1_STRING = "HTTP/1.1";
     /**
      * 正则匹配version
      */
     private static final Pattern VERSION_PATTERN = Pattern.compile("(\\S+)/(\\d+)\\.(\\d+)");
+    /**
+     * 协议名称HTTP
+     */
+    private final String protocolName;
+    /**
+     * 主版本号
+     */
+    private final int majorVersion;
+    /**
+     * 副版本号
+     */
+    private final int minorVersion;
+    /**
+     * 实际version内容（未实现其他的）
+     */
+    private final String text;
+    /**
+     * 是否保持长连接（不知道是否要实现，先放在这里）
+     */
+    private final boolean keepAliveDefault;
 
     public HttpVersion(String text, boolean keepAliveDefault) {
         if (text == null) {

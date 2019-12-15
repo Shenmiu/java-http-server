@@ -1,6 +1,5 @@
 package cn.edu.nju.nioserver.http;
 
-import manifold.ext.api.Jailbreak;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -13,9 +12,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by jjenkov on 19-10-2015.
  */
-public class HttpUtilTest {
-
-    @Jailbreak HttpUtil httpUtil = new HttpUtil();
+public class HttpRequestEncoderTest {
 
     @Test
     public void testParseHttpRequest() {

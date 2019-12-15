@@ -18,23 +18,6 @@ public class HttpRequestEncoder {
     private HttpRequest curRequest = new HttpRequest();
 
     /**
-     * 当前HttpRequest的解析状态
-     */
-    private enum State {
-        SKIP_CONTROL_CHARS,
-        READ_INITIAL,
-        READ_HEADER,
-        READ_VARIABLE_LENGTH_CONTENT,
-        READ_FIXED_LENGTH_CONTENT,
-        READ_CHUNK_SIZE,
-        READ_CHUNKED_CONTENT,
-        READ_CHUNK_DELIMITER,
-        READ_CHUNK_FOOTER,
-        BAD_MESSAGE,
-        UPGRADED
-    }
-
-    /**
      * 解析请求，将固定格式包装进request中
      *
      * @param buffer   字节流缓冲区
@@ -205,5 +188,22 @@ public class HttpRequestEncoder {
             info[i] = list.get(i);
         }
         return new String(info, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 当前HttpRequest的解析状态
+     */
+    private enum State {
+        SKIP_CONTROL_CHARS,
+        READ_INITIAL,
+        READ_HEADER,
+        READ_VARIABLE_LENGTH_CONTENT,
+        READ_FIXED_LENGTH_CONTENT,
+        READ_CHUNK_SIZE,
+        READ_CHUNKED_CONTENT,
+        READ_CHUNK_DELIMITER,
+        READ_CHUNK_FOOTER,
+        BAD_MESSAGE,
+        UPGRADED
     }
 }

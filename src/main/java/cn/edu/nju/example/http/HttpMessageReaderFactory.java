@@ -1,4 +1,4 @@
-package cn.edu.nju.nioserver.http;
+package cn.edu.nju.example.http;
 
 import cn.edu.nju.nioserver.core.message.IMessageReader;
 import cn.edu.nju.nioserver.core.message.IMessageReaderFactory;

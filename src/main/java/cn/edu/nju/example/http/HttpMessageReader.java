@@ -1,9 +1,10 @@
-package cn.edu.nju.nioserver.http;
+package cn.edu.nju.example.http;
 
 import cn.edu.nju.nioserver.core.Socket;
 import cn.edu.nju.nioserver.core.message.IMessageReader;
 import cn.edu.nju.nioserver.core.message.Message;
 import cn.edu.nju.nioserver.core.message.MessageBuffer;
+import cn.edu.nju.nioserver.http.HttpHeaders;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

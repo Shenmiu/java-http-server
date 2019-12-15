@@ -13,86 +13,6 @@ public class HttpHeaders {
     private Map<String, String> headers = new HashMap<>();
 
     /**
-     * 设置或者添加header
-     *
-     * @param name  HttpHeaderNames
-     * @param value 对应内容
-     */
-    public void set(String name, String value) {
-        headers.put(name, value);
-    }
-
-    /**
-     * 根据名字获取header内容
-     *
-     * @param name HttpHeaderNames
-     * @return String
-     */
-    public String get(String name) {
-        return headers.get(name);
-    }
-
-    /**
-     * 根据名字删除header内容（包括键）
-     *
-     * @param name HttpHeaderNames
-     */
-    public void remove(String name) {
-        headers.remove(name);
-    }
-
-    /**
-     * 清空所有header
-     */
-    public void clear() {
-        headers.clear();
-    }
-
-    /**
-     * 根据指定键值对查找是否存在
-     *
-     * @param name       HttpHeaderNames
-     * @param value      对应内容
-     * @param ignoreCase 是否忽略大小写
-     * @return boolean
-     */
-    public boolean containsValue(String name, String value, boolean ignoreCase) {
-        if (ignoreCase) {
-            for (String key : headers.keySet()) {
-                if (name.equalsIgnoreCase(key) && value.equalsIgnoreCase(headers.get(key))) {
-                    return true;
-                }
-            }
-        } else {
-            for (String key : headers.keySet()) {
-                if (name.equals(key) && value.equals(headers.get(key))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * 判断是否存在ContentLength
-     *
-     * @return boolean
-     */
-    public boolean containsContentLength() {
-        return headers.containsKey(HttpHeaderNames.CONTENT_LENGTH);
-    }
-
-    /**
-     * 获取headers的迭代器
-     *
-     * @return headers的迭代器
-     */
-    public Iterator<Map.Entry<String, String>> headersIterator() {
-        return headers.entrySet().iterator();
-    }
-
-    /**
      * 查询是否保持长连接
      *
      * @param request HttpRequest
@@ -208,5 +128,85 @@ public class HttpHeaders {
             throw new IllegalArgumentException(HttpHeaderNames.CONTENT_LENGTH + " is not exist");
         }
         return Integer.parseInt(length);
+    }
+
+    /**
+     * 设置或者添加header
+     *
+     * @param name  HttpHeaderNames
+     * @param value 对应内容
+     */
+    public void set(String name, String value) {
+        headers.put(name, value);
+    }
+
+    /**
+     * 根据名字获取header内容
+     *
+     * @param name HttpHeaderNames
+     * @return String
+     */
+    public String get(String name) {
+        return headers.get(name);
+    }
+
+    /**
+     * 根据名字删除header内容（包括键）
+     *
+     * @param name HttpHeaderNames
+     */
+    public void remove(String name) {
+        headers.remove(name);
+    }
+
+    /**
+     * 清空所有header
+     */
+    public void clear() {
+        headers.clear();
+    }
+
+    /**
+     * 根据指定键值对查找是否存在
+     *
+     * @param name       HttpHeaderNames
+     * @param value      对应内容
+     * @param ignoreCase 是否忽略大小写
+     * @return boolean
+     */
+    public boolean containsValue(String name, String value, boolean ignoreCase) {
+        if (ignoreCase) {
+            for (String key : headers.keySet()) {
+                if (name.equalsIgnoreCase(key) && value.equalsIgnoreCase(headers.get(key))) {
+                    return true;
+                }
+            }
+        } else {
+            for (String key : headers.keySet()) {
+                if (name.equals(key) && value.equals(headers.get(key))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 判断是否存在ContentLength
+     *
+     * @return boolean
+     */
+    public boolean containsContentLength() {
+        return headers.containsKey(HttpHeaderNames.CONTENT_LENGTH);
+    }
+
+    /**
+     * 获取headers的迭代器
+     *
+     * @return headers的迭代器
+     */
+    public Iterator<Map.Entry<String, String>> headersIterator() {
+        return headers.entrySet().iterator();
     }
 }

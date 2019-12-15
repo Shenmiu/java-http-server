@@ -49,14 +49,8 @@ public class HttpMethod {
      * CONNECT
      */
     public static final HttpMethod CONNECT = new HttpMethod("CONNECT");
-
     /**
-     * 实际的名字
-     */
-    private final String name;
-
-    /**
-     *  string <-> HttpMethod
+     * string <-> HttpMethod
      */
     private static final Map<String, HttpMethod> methodMap;
 
@@ -72,6 +66,11 @@ public class HttpMethod {
         methodMap.put("TRACE", TRACE);
         methodMap.put("CONNECT", CONNECT);
     }
+
+    /**
+     * 实际的名字
+     */
+    private final String name;
 
     public HttpMethod(String name) {
         if (name == null || name.isEmpty()) {
@@ -89,15 +88,6 @@ public class HttpMethod {
     }
 
     /**
-     *  获取当前method的名字
-     *
-     * @return String
-     */
-    public String name() {
-        return name;
-    }
-
-    /**
      * 根据名字获取HttpMethod对象
      *
      * @param name String 名字
@@ -106,6 +96,15 @@ public class HttpMethod {
     public static HttpMethod valueOf(String name) {
         HttpMethod result = methodMap.get(name);
         return result != null ? result : new HttpMethod(name);
+    }
+
+    /**
+     * 获取当前method的名字
+     *
+     * @return String
+     */
+    public String name() {
+        return name;
     }
 
     @Override
