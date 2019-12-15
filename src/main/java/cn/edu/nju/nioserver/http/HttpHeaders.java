@@ -2,6 +2,7 @@ package cn.edu.nju.nioserver.http;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class HttpHeaders {
@@ -80,6 +81,15 @@ public class HttpHeaders {
      */
     public boolean containsContentLength() {
         return headers.containsKey(HttpHeaderNames.CONTENT_LENGTH);
+    }
+
+    /**
+     * 获取headers的迭代器
+     *
+     * @return headers的迭代器
+     */
+    public Iterator<Map.Entry<String, String>> headersIterator() {
+        return headers.entrySet().iterator();
     }
 
     /**

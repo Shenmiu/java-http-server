@@ -55,7 +55,7 @@ public class HttpRequestEncoder {
                     currentState = State.READ_HEADER;
                 }
                 case READ_HEADER: {
-                    int result = encodeHeaders(start, buffer, curRequest);
+                    int result = encodeRequestHeaders(start, buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -68,7 +68,7 @@ public class HttpRequestEncoder {
                     }
                 }
                 case READ_FIXED_LENGTH_CONTENT: {
-                    int result = encodeContent(start, HttpHeaders.getContentLength(curRequest), buffer, curRequest);
+                    int result = encodeRequestContent(start, HttpHeaders.getContentLength(curRequest), buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -130,7 +130,7 @@ public class HttpRequestEncoder {
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeHeaders(int start, ByteBuffer buffer, HttpRequest request) {
+    private int encodeRequestHeaders(int start, ByteBuffer buffer, HttpRequest request) {
         HttpHeaders httpHeaders = new HttpHeaders(); //解析时创建，不能调用给上层提供的接口
 
         int limit = buffer.limit();
@@ -179,7 +179,7 @@ public class HttpRequestEncoder {
      * @param request       HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeContent(int start, int contentLength, ByteBuffer buffer, HttpRequest request) {
+    private int encodeRequestContent(int start, int contentLength, ByteBuffer buffer, HttpRequest request) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(contentLength); //HeapByteBuffer
         int limit = buffer.limit();
         for (int i = 0; i < contentLength; i++) {
