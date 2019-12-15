@@ -74,6 +74,15 @@ public class HttpHeaders {
     }
 
     /**
+     * 判断是否存在ContentLength
+     *
+     * @return boolean
+     */
+    public boolean containsContentLength() {
+        return headers.containsKey(HttpHeaderNames.CONTENT_LENGTH);
+    }
+
+    /**
      * 查询是否保持长连接
      *
      * @param request HttpRequest
@@ -127,7 +136,14 @@ public class HttpHeaders {
      * @param value   内容
      */
     public static void setHeader(HttpRequest request, String name, String value) {
-        request.headers().set(name, value);
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name is not exist");
+        }
+
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("value is not exist");
+        }
+        request.headers().set(name.trim(), value.trim());
     }
 
     /**
@@ -138,7 +154,7 @@ public class HttpHeaders {
      * @param value   内容
      */
     public static void addHeader(HttpRequest request, String name, String value) {
-        request.headers().set(name, value);
+        HttpHeaders.setHeader(request, name, value);
     }
 
     /**
@@ -158,5 +174,29 @@ public class HttpHeaders {
      */
     public static void clearHeaders(HttpRequest request) {
         request.headers().clear();
+    }
+
+    /**
+     * 判断是否存在ContentLength
+     *
+     * @param request HttpRequest
+     * @return 是否存在ContentLength
+     */
+    public static boolean hasContentLength(HttpRequest request) {
+        return request.headers().containsContentLength();
+    }
+
+    /**
+     * 获取ContentLength
+     *
+     * @param request HttpRequest
+     * @return 获取ContentLength
+     */
+    public static int getContentLength(HttpRequest request) {
+        String length = request.headers().get(HttpHeaderNames.CONTENT_LENGTH);
+        if (length == null) {
+            throw new IllegalArgumentException(HttpHeaderNames.CONTENT_LENGTH + " is not exist");
+        }
+        return Integer.parseInt(length);
     }
 }

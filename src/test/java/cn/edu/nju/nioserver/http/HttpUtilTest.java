@@ -4,7 +4,10 @@ import manifold.ext.api.Jailbreak;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,22 +21,46 @@ public class HttpUtilTest {
     @Test
     public void testParseHttpRequest() {
         String httpRequest =
-                "GET /562f25980001b1b106000338.jpg HTTP/1.1\r\n" +
+                "POST / HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
-                        "User-Agent:Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n" +
-                        "Accept:image/webp,image/*,*/*;q=0.8\r\n" +
-                        "Referer:www.hostname.com\r\n" +
-                        "Accept-Encoding:gzip, deflate, sdch\r\n" +
-                        "Accept-Language:zh-CN,zh;q=0.8\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:40\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "name=Professional%20Ajax&publisher=Wiley" +
+                        "POST / HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:40\r\n" +
+                        "Connection: Keep-Alive\r\n" +
                         "\r\n" +
                         "name=Professional%20Ajax&publisher=Wiley";
 
-        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
 
-        HttpRequest request = new HttpRequest();
-        HttpRequestEncoder.encode(source, 0, source.length - 1, request);
-        assertEquals(request.method(), HttpMethod.GET);
-        assertEquals(request.version(), HttpVersion.HTTP_1_1);
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
+        byteBuffer.put(source);
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        encoder.encode(byteBuffer, requestList);
+        assertEquals(requestList.size(), 2);
+    }
+
+    @Test
+    public void testParseHttpRequest1() {
+        String httpRequest =
+                "POST / HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
+        byteBuffer.put(source);
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        int result = encoder.encode(byteBuffer, requestList);
+        assertEquals(requestList.size(), 0);
     }
 
     @Test
