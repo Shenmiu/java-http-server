@@ -27,6 +27,13 @@ public class HttpRequest {
      */
     private String content;
 
+    public HttpRequest(HttpVersion version, HttpMethod method, HttpHeaders headers, String uri, String content) {
+        this.version = version;
+        this.method = method;
+        this.headers = headers;
+        this.uri = uri;
+        this.content = content;
+    }
 
     public HttpVersion version() {
         return version;

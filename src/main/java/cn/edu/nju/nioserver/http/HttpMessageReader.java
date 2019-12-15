@@ -42,7 +42,8 @@ public class HttpMessageReader implements IMessageReader {
 
         this.nextMessage.writeToMessage(byteBuffer);
 
-        int endIndex = HttpUtil.parseHttpRequest(this.nextMessage.sharedBuffer, this.nextMessage.offset, this.nextMessage.offset + this.nextMessage.length, (HttpHeaders) this.nextMessage.metaData);
+        int endIndex = -1; //tmp for this
+//        int endIndex = HttpUtil.parseHttpRequest(this.nextMessage.sharedBuffer, this.nextMessage.offset, this.nextMessage.offset + this.nextMessage.length, (HttpHeaders) this.nextMessage.metaData);
         if (endIndex != -1) {
             Message message = this.messageBuffer.newMessage();
             message.metaData = new HttpHeaders();

@@ -20,10 +20,10 @@ public class HttpUtil {
     /**
      * 解析 HTTP 请求
      *
-     * @param src         保存 HTTP 请求的数据源
-     * @param startIndex  该 HTTP 请求的起始位置
-     * @param endIndex    该 HTTP 请求的结束位置
-     * @param request 保存 HTTP 请求的元数据
+     * @param src        保存 HTTP 请求的数据源
+     * @param startIndex 该 HTTP 请求的起始位置
+     * @param endIndex   该 HTTP 请求的结束位置
+     * @param request    保存 HTTP 请求的元数据
      * @return 该 HTTP 请求的结束位置，若解析失败返回 -1
      */
     public static int parseHttpRequest(byte[] src, int startIndex, int endIndex, HttpRequest request) {
@@ -65,6 +65,10 @@ public class HttpUtil {
 //        }
 
         return -1;
+    }
+
+    public static int parseHttpResponse(byte[]target ,HttpResponse response){
+        return 0;
     }
 
     /**
