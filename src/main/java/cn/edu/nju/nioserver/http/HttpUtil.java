@@ -1,5 +1,8 @@
 package cn.edu.nju.nioserver.http;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 /**
  * HTTP 请求解析工具类
  *
@@ -27,47 +30,10 @@ public class HttpUtil {
      * @return 该 HTTP 请求的结束位置，若解析失败返回 -1
      */
     public static int parseHttpRequest(byte[] src, int startIndex, int endIndex, HttpRequest request) {
-
-//        // 解析请求行
-//        int endOfFirstLine = findNextLineBreak(src, startIndex, endIndex);
-//        if (endOfFirstLine == -1) {
-//            return -1;
-//        }
-//
-//        // 解析请求头
-//        int prevEndOfHeader = endOfFirstLine + 1;
-//        int endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
-//
-//        //prevEndOfHeader + 1 = end of previous header + 2 (+2 = CR + LF)
-//        while (endOfHeader != -1 && endOfHeader != prevEndOfHeader + 1) {
-//
-//            if (matches(src, prevEndOfHeader, CONTENT_LENGTH)) {
-//                httpHeaders.contentLength = findContentLength(src, prevEndOfHeader, endIndex);
-//            }
-//
-//            prevEndOfHeader = endOfHeader + 1;
-//            endOfHeader = findNextLineBreak(src, prevEndOfHeader, endIndex);
-//        }
-//
-//        if (endOfHeader == -1) {
-//            return -1;
-//        }
-//
-//        //check that byte array contains full HTTP message.
-//        int bodyStartIndex = endOfHeader + 1;
-//        int bodyEndIndex = bodyStartIndex + httpHeaders.contentLength;
-//
-//        if (bodyEndIndex <= endIndex) {
-//            //byte array contains a full HTTP request
-//            httpHeaders.bodyStartIndex = bodyStartIndex;
-//            httpHeaders.bodyEndIndex = bodyEndIndex;
-//            return bodyEndIndex;
-//        }
-
         return -1;
     }
 
-    public static int parseHttpResponse(byte[]target ,HttpResponse response){
+    public static int parseHttpResponse(byte[] target, HttpResponse response) {
         return 0;
     }
 
@@ -144,40 +110,5 @@ public class HttpUtil {
             }
         }
         return -1;
-    }
-
-    public static void resolveHttpMethod(byte[] src, int startIndex, HttpHeaders httpHeaders) {
-//        if (matches(src, startIndex, GET)) {
-//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_GET;
-//        }
-//        if (matches(src, startIndex, POST)) {
-//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_POST;
-//        }
-//        if (matches(src, startIndex, PUT)) {
-//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_PUT;
-//        }
-//        if (matches(src, startIndex, HEAD)) {
-//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_HEAD;
-//        }
-//        if (matches(src, startIndex, DELETE)) {
-//            httpHeaders.httpMethod = HttpHeaders.HTTP_METHOD_DELETE;
-//        }
-    }
-
-    /**
-     * 用于比较数据源中的数据和相应的字段是否相同
-     *
-     * @param src    数据源
-     * @param offset 比较数据的偏移量
-     * @param value  用于对比的字段
-     * @return 是否相同
-     */
-    private static boolean matches(byte[] src, int offset, byte[] value) {
-        for (int i = offset, n = 0; n < value.length; i++, n++) {
-            if (src[i] != value[n]) {
-                return false;
-            }
-        }
-        return true;
     }
 }

@@ -18,6 +18,9 @@ public class HttpMessage {
      */
     private HttpHeaders headers;
 
+    public HttpMessage() {
+    }
+
     public HttpMessage(HttpVersion version, ByteBuffer content, HttpHeaders headers) {
         this.version = version;
         this.content = content;

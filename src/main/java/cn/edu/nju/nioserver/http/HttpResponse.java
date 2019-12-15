@@ -9,6 +9,9 @@ public class HttpResponse extends HttpMessage{
      */
     private HttpResponseStatus status;
 
+    public HttpResponse() {
+    }
+
     public HttpResponse(ByteBuffer content, HttpResponseStatus status, HttpVersion version, HttpHeaders headers) {
         super(version,content,headers);
         this.status = status;

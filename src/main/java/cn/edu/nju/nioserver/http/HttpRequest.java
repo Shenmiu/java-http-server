@@ -14,6 +14,9 @@ public class HttpRequest extends HttpMessage {
      */
     private String uri;
 
+    public HttpRequest() {
+    }
+
     public HttpRequest(HttpVersion version, HttpMethod method, HttpHeaders headers, String uri, ByteBuffer content) {
         super(version, content, headers);
         this.method = method;
