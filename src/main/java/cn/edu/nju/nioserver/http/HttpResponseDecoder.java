@@ -48,6 +48,7 @@ public class HttpResponseDecoder {
         Iterator<Map.Entry<String, String>> iterator = httpHeaders.headersIterator();
         StringBuilder builder = new StringBuilder();
 
+        //迭代获取所有首部
         while (iterator.hasNext()) {
             Map.Entry<String, String> header = iterator.next();
             builder.append(header.getKey())

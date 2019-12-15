@@ -3,7 +3,6 @@ package cn.edu.nju.nioserver.http;
 import manifold.ext.api.Jailbreak;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -61,13 +60,5 @@ public class HttpUtilTest {
         HttpRequestEncoder encoder = new HttpRequestEncoder();
         int result = encoder.encode(byteBuffer, requestList);
         assertEquals(requestList.size(), 0);
-    }
-
-    @Test
-    public void testFindContentLength() throws UnsupportedEncodingException {
-        @Jailbreak HttpUtil httpUtil = null;
-        String contentLength = "Content-Length: 200\r\n";
-//        int res = httpUtil.findContentLength(contentLength.getBytes(StandardCharsets.UTF_8), 0, contentLength.length() - 1);
-//        assertEquals(res, 200);
     }
 }
