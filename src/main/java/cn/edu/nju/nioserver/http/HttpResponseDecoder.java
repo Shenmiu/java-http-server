@@ -27,10 +27,13 @@ public class HttpResponseDecoder {
      */
     private static void decodeResponseLine(HttpResponse response, ByteBuffer buffer) {
         StringBuilder builder = new StringBuilder();
-        builder.append(response.version().text()) //HTTP协议版本号
+        //HTTP协议版本号
+        builder.append(response.version().text())
                 .append(" ")
+                //状态码
                 .append(response.status().code())
                 .append(" ")
+                //状态码消息
                 .append(response.status().codeAsText())
                 .append("\r\n");
         byte[] result = builder.toString().getBytes(StandardCharsets.UTF_8);

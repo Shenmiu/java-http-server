@@ -17,6 +17,7 @@ public class HttpRequestEncoder {
      */
     private HttpRequest curRequest = new HttpRequest();
 
+
     /**
      * 解析请求，将固定格式包装进request中
      *
@@ -86,7 +87,9 @@ public class HttpRequestEncoder {
         while (cur != '\r') {
             contentList.add(cur);
             index++;
-            if (index == limit) { //buffer已经读到末尾，但是没有找到请求行的结束符(\r\n)
+
+            //buffer已经读到末尾，但是没有找到请求行的结束符(\r\n)
+            if (index == limit) {
                 return -1;
             }
 
@@ -94,12 +97,16 @@ public class HttpRequestEncoder {
         }
 
         index++;
-        cur = buffer.get(index); //read the '\n'
+        //read the '\n'
+        cur = buffer.get(index);
 
 
         String[] info = byte2String(contentList).split("\\s");
-        request.setMethod(HttpMethod.valueOf(info[0])); // method
-        request.setUri(info[1]); //uri
+        // method
+        request.setMethod(HttpMethod.valueOf(info[0]));
+        //uri
+        request.setUri(info[1]);
+        //version
         request.setVersion(HttpVersion.valueOf(info[2]));
 
         return index + 1;
@@ -114,7 +121,8 @@ public class HttpRequestEncoder {
      * @return int 下一部分的开始下标，解析失败为-1
      */
     private int encodeRequestHeaders(int start, ByteBuffer buffer, HttpRequest request) {
-        HttpHeaders httpHeaders = new HttpHeaders(); //解析时创建，不能调用给上层提供的接口
+        //解析时创建，不能调用给上层提供的接口
+        HttpHeaders httpHeaders = new HttpHeaders();
 
         int limit = buffer.limit();
         int index = start;
@@ -127,22 +135,28 @@ public class HttpRequestEncoder {
             List<Byte> contentList = new ArrayList<>();
             byte cur = buffer.get(index);
             while (cur != '\r') {
-                countEnd = 0; //恢复
+                //恢复
+                countEnd = 0;
 
                 contentList.add(cur);
                 index++;
-                if (index == limit) { //buffer已经读到末尾，但是没有找到请求行的结束符(\r\n)
+                //buffer已经读到末尾，但是没有找到请求行的结束符(\r\n)
+                if (index == limit) {
                     return -1;
                 }
                 cur = buffer.get(index);
             }
 
-            index++; //指向'\n'
-            cur = buffer.get(index); //read the '\n'
-            index++;//指向下一行的起始字符
+            //指向'\n'
+            index++;
+            //read the '\n'
+            cur = buffer.get(index);
+            //指向下一行的起始字符
+            index++;
 
             if (countEnd == 1) {
-                break; //读到了连续的两个\r\n
+                //读到了连续的两个\r\n
+                break;
             }
             String[] header = byte2String(contentList).split(":");
             httpHeaders.set(header[0].trim(), header[1].trim());
@@ -163,7 +177,8 @@ public class HttpRequestEncoder {
      * @return int 下一部分的开始下标，解析失败为-1
      */
     private int encodeRequestContent(int start, int contentLength, ByteBuffer buffer, HttpRequest request) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(contentLength); //HeapByteBuffer
+        //HeapByteBuffer
+        ByteBuffer byteBuffer = ByteBuffer.allocate(contentLength);
         int limit = buffer.limit();
         for (int i = 0; i < contentLength; i++) {
             if (start + i < limit) {
