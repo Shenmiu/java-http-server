@@ -117,6 +117,16 @@ public class HttpHeaders {
     }
 
     /**
+     * 判断是否存在ContentLength
+     *
+     * @param request HttpRequest
+     * @return 是否存在ContentLength
+     */
+    public static boolean isChunkTransfer(HttpRequest request) {
+        return request.headers().isChunkTransfer();
+    }
+
+    /**
      * 获取ContentLength
      *
      * @param request HttpRequest
@@ -199,6 +209,25 @@ public class HttpHeaders {
      */
     public boolean containsContentLength() {
         return headers.containsKey(HttpHeaderNames.CONTENT_LENGTH);
+    }
+
+    /**
+     * 判断是否为分块传输
+     *
+     * @return boolean
+     */
+    public boolean isChunkTransfer() {
+        String value = headers.get(HttpHeaderNames.TRANSFER_ENCODING);
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+
+        // 判断为分块传输
+        if (value.equalsIgnoreCase("chunked")) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

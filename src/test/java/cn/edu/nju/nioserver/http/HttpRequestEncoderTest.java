@@ -40,7 +40,7 @@ public class HttpRequestEncoderTest {
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestEncoder encoder = new HttpRequestEncoder();
-        encoder.encode(byteBuffer, requestList);
+        encoder.encode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 2);
     }
 
@@ -55,7 +55,77 @@ public class HttpRequestEncoderTest {
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestEncoder encoder = new HttpRequestEncoder();
-        int result = encoder.encode(byteBuffer, requestList);
+        int result = encoder.encode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 0);
+    }
+
+    @Test
+    public void testParseHttpRequestChunk() {
+        String httpRequest =
+                "POST / HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Transfer-Encoding:chunked\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "8\r\n" +
+                        "area=2 a\r\n" +
+                        "5\r\n" +
+                        "nd ex\r\n" +
+                        "4\r\n" +
+                        "ists\r\n" +
+                        "5\r\n" +
+                        "(sele\r\n" +
+                        "5\r\n" +
+                        "ct 1)\r\n" +
+                        "0\r\n" +
+                        "\r\n";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
+        byteBuffer.put(source);
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        encoder.encode(0, byteBuffer, requestList);
+        assertEquals(requestList.size(), 1);
+    }
+
+    @Test
+    public void testParseHttpRequestChunk1() {
+        String httpRequest =
+                "POST / HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Transfer-Encoding:chunked\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "8\r\n";
+        String anotherChunk = "area=2 a\r\n" +
+                "5\r\n" +
+                "nd ex\r\n" +
+                "4\r\n" +
+                "ists\r\n" +
+                "5\r\n" +
+                "(sele\r\n" +
+                "5\r\n" +
+                "ct 1)\r\n" +
+                "0\r\n" +
+                "\r\n";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        byte[] another = anotherChunk.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length + another.length);
+        byteBuffer.put(source);
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestEncoder encoder = new HttpRequestEncoder();
+
+        encoder.encode(0, byteBuffer, requestList);
+
+        byteBuffer.put(another);
+        encoder.encode(source.length, byteBuffer, requestList);
+
+        assertEquals(requestList.size(), 1);
     }
 }

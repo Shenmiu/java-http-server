@@ -17,6 +17,16 @@ public class HttpRequestEncoder {
      */
     private HttpRequest curRequest = new HttpRequest();
 
+    /**
+     * 当前的chunk长度
+     */
+    private int curChunkLength = -1;
+
+    /**
+     * 当前的chunk内容
+     */
+    private List<Byte> curChunk = new ArrayList<>();
+
 
     /**
      * 解析请求，将固定格式包装进request中
@@ -24,9 +34,7 @@ public class HttpRequestEncoder {
      * @param buffer   字节流缓冲区
      * @param requests 请求列表
      */
-    public int encode(ByteBuffer buffer, List<HttpRequest> requests) {
-
-        int start = 0;
+    public int encode(int start, ByteBuffer buffer, List<HttpRequest> requests) {
         int limit = buffer.limit();
         while (start != limit) {
             switch (currentState) {
@@ -37,6 +45,7 @@ public class HttpRequestEncoder {
                     }
                     start = result;
                     currentState = State.READ_HEADER;
+                    break;
                 }
                 case READ_HEADER: {
                     int result = encodeRequestHeaders(start, buffer, curRequest);
@@ -47,24 +56,65 @@ public class HttpRequestEncoder {
 
                     if (HttpHeaders.hasContentLength(curRequest)) {
                         currentState = State.READ_FIXED_LENGTH_CONTENT;
-                    } else {
+                    } else if (HttpHeaders.isChunkTransfer(curRequest)) {
                         currentState = State.READ_VARIABLE_LENGTH_CONTENT;
                     }
+                    break;
                 }
                 case READ_FIXED_LENGTH_CONTENT: {
                     int result = encodeRequestContent(start, HttpHeaders.getContentLength(curRequest), buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
+
+                    //当前请求编码结束
                     start = result;
                     requests.add(curRequest);
-
                     //reset
-                    curRequest = new HttpRequest();
-                    currentState = State.READ_INITIAL;
+                    reset();
+                    break;
                 }
                 case READ_VARIABLE_LENGTH_CONTENT: {
-                    //暂时默认这种情况不处理
+                    //跳转到开始读取块长度状态
+                    currentState = State.READ_CHUNK_SIZE;
+                    break;
+                }
+                case READ_CHUNK_SIZE: {
+                    int result = encodeRequestChunkSize(start, buffer, curRequest);
+                    if (result == -1) {
+                        return start;
+                    }
+
+                    start = result;
+                    if (this.curChunkLength != 0) {
+                        currentState = State.READ_CHUNKED_CONTENT;
+                    } else {
+                        currentState = State.READ_CHUNK_FOOTER;
+                    }
+                    break;
+                }
+                case READ_CHUNKED_CONTENT: {
+                    int result = encodeRequestChunkContent(start, buffer, curRequest);
+                    if (result == -1) {
+                        return start;
+                    }
+
+                    start = result;
+                    currentState = State.READ_CHUNK_SIZE;
+                    break;
+                }
+                case READ_CHUNK_FOOTER: {
+                    int result = encodeRequestChunkFooter(start, buffer, curRequest);
+                    if (result == -1) {
+                        return start;
+                    }
+
+                    //当前请求分块传输结束
+                    start = result;
+                    requests.add(curRequest);
+                    //reset
+                    reset();
+                    break;
                 }
             }
         }
@@ -170,7 +220,7 @@ public class HttpRequestEncoder {
     /**
      * 解析请求内容
      *
-     * @param start         开始读取请求行的第一个字符下标
+     * @param start         开始读取请求内容的第一个字符下标
      * @param contentLength content的长度
      * @param buffer        缓冲
      * @param request       HttpRequest
@@ -192,6 +242,122 @@ public class HttpRequestEncoder {
     }
 
     /**
+     * 读取chunk的内容
+     *
+     * @param start   开始读取chunk的第一个字符下标
+     * @param buffer  缓冲
+     * @param request HttpRequest
+     * @return int 下一部分的开始下标，解析失败为-1
+     */
+    private int encodeRequestChunkSize(int start, ByteBuffer buffer, HttpRequest request) {
+        List<Byte> size = new ArrayList<>();
+        int limit = buffer.limit();
+        int index = start;
+        byte cur = buffer.get(index);
+        while (cur != '\r') {
+            size.add(cur);
+            index++;
+
+            if (index == limit) {
+                return -1;
+            }
+
+            cur = buffer.get(index);
+        }
+
+        index++;
+        //当前为'\n'
+        cur = buffer.get(index);
+
+
+        this.curChunkLength = byte2Int(size);
+        return index + 1;
+    }
+
+    /**
+     * 读取chunk的内容
+     *
+     * @param start   开始读取chunk的第一个字符下标
+     * @param buffer  缓冲
+     * @param request HttpRequest
+     * @return int 下一部分的开始下标，解析失败为-1
+     */
+    private int encodeRequestChunkContent(int start, ByteBuffer buffer, HttpRequest request) {
+        //先用list保存所有的chunk,当读取到最后一个chunk的时候，将list全部写入request
+        List<Byte> content = new ArrayList<>();
+        int limit = buffer.limit();
+        for (int i = 0; i < this.curChunkLength; i++) {
+            if (start + i < limit) {
+                content.add(buffer.get(start + i));
+            } else {
+                return -1;
+            }
+        }
+
+        int index = start + this.curChunkLength;
+        if (limit - index < 2) {
+            //最后的"\r\n"不完整
+            return -1;
+        }
+
+        byte cur_r = buffer.get(index);
+        index++;
+        byte cur_n = buffer.get(index);
+        if (cur_r != '\r' || cur_n != '\n') {
+            //消息是错误的
+            return -1;
+        }
+        //当前块成功读完
+        this.curChunk.addAll(content);
+        return index + 1;
+    }
+
+    /**
+     * 读取chunk的footer，并将块缓存encode入request中(结束块也必须读完整，才可以encode)
+     *
+     * @param start   开始读取chunk的第一个字符下标
+     * @param buffer  缓冲
+     * @param request HttpRequest
+     * @return int 下一部分的开始下标，解析失败为-1
+     */
+    private int encodeRequestChunkFooter(int start, ByteBuffer buffer, HttpRequest request) {
+
+        int limit = buffer.limit();
+        if (limit - start < 2) {
+            // "\r\n"不完整
+            return -1;
+        }
+
+        int index = start;
+        byte cur_r = buffer.get(index);
+        index++;
+        byte cur_n = buffer.get(index);
+        if (cur_r != '\r' || cur_n != '\n') {
+            //消息是错误的
+            return -1;
+        }
+
+
+        //结束块成功读完
+        ByteBuffer byteBuffer = ByteBuffer.allocate(this.curChunk.size());
+        for (int i = 0; i < this.curChunk.size(); i++) {
+            byteBuffer.put(this.curChunk.get(i));
+        }
+        request.setContent(byteBuffer);
+        return index + 1;
+    }
+
+    /**
+     * 重置当前对象为初始状态
+     */
+    private void reset() {
+        currentState = State.READ_INITIAL;
+        curRequest = new HttpRequest();
+        curChunk = new ArrayList<>();
+        curChunkLength = -1;
+    }
+
+    /**
      * 根据字节list获取UTF-8编码的String
      *
      * @param list 字节list
@@ -203,6 +369,20 @@ public class HttpRequestEncoder {
             info[i] = list.get(i);
         }
         return new String(info, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 根据字节list获取int(暂时考虑int值超过byte范围，但不超过int范围)
+     *
+     * @param list
+     * @return
+     */
+    private int byte2Int(List<Byte> list) {
+        byte[] info = new byte[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            info[i] = list.get(i);
+        }
+        return Integer.parseInt(new String(info));
     }
 
     /**
