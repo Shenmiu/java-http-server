@@ -19,6 +19,11 @@ import java.util.regex.Pattern;
  */
 public class HttpServiceController implements HttpService {
 
+    public static final HttpServiceController controller = new HttpServiceController();
+
+    private HttpServiceController() {
+    }
+
     private static final Pattern DEMO_URI_PATTERN = Pattern.compile("^/([a-z]+)/?(.*)$");
 
     private static Map<DemoServiceName, HttpService> services;
