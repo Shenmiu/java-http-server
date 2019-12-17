@@ -12,17 +12,17 @@ public class TCPServer {
 
     private int port;
 
-    private ChannelHandler handler;
+    private ChannelPipelineFactory pipelineFactory;
 
-    public TCPServer(int port, ChannelHandler handler) {
+    public TCPServer(int port, ChannelPipelineFactory pipelineFactory) {
         this.port = port;
-        this.handler = handler;
+        this.pipelineFactory = pipelineFactory;
     }
 
     public void startServer() {
         ConcurrentLinkedQueue<SocketChannel> channelQueue = new ConcurrentLinkedQueue<>();
         Acceptor acceptor = new Acceptor(port, channelQueue);
-        Worker worker = new Worker(channelQueue, handler);
+        Worker worker = new Worker(channelQueue, pipelineFactory);
         new Thread(acceptor).start();
         new Thread(worker).start();
     }
