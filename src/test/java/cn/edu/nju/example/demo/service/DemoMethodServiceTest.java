@@ -1,8 +1,8 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.example.demo.DemoService;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
+import cn.edu.nju.nioserver.http.HttpService;
 import cn.edu.nju.nioserver.http.HttpRequest;
-import cn.edu.nju.nioserver.http.HttpRequestEncoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
 import org.junit.After;
 import org.junit.Before;
@@ -51,11 +51,11 @@ public class DemoMethodServiceTest {
         ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestEncoder encoder = new HttpRequestEncoder();
-        encoder.encode(0, byteBuffer, requestList);
+        HttpRequestDecoder decoder = new HttpRequestDecoder();
+        decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        DemoService service = new DemoMethodService();
+        HttpService service = new HttpMethodService();
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().array(), StandardCharsets.UTF_8);
@@ -82,11 +82,11 @@ public class DemoMethodServiceTest {
         ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestEncoder encoder = new HttpRequestEncoder();
-        encoder.encode(0, byteBuffer, requestList);
+        HttpRequestDecoder decoder = new HttpRequestDecoder();
+        decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        DemoService service = new DemoMethodService();
+        HttpService service = new HttpMethodService();
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().array(), StandardCharsets.UTF_8);

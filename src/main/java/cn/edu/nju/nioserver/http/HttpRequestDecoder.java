@@ -34,12 +34,12 @@ public class HttpRequestDecoder {
      * @param buffer   字节流缓冲区
      * @param requests 请求列表
      */
-    public int encode(int start, ByteBuffer buffer, List<HttpRequest> requests) {
+    public int decode(int start, ByteBuffer buffer, List<HttpRequest> requests) {
         int limit = buffer.limit();
         while (start != limit) {
             switch (currentState) {
                 case READ_INITIAL: {
-                    int result = encodeRequestLine(start, buffer, curRequest);
+                    int result = decodeRequestLine(start, buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -48,7 +48,7 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_HEADER: {
-                    int result = encodeRequestHeaders(start, buffer, curRequest);
+                    int result = decodeRequestHeaders(start, buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -62,7 +62,7 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_FIXED_LENGTH_CONTENT: {
-                    int result = encodeRequestContent(start, HttpHeaders.getContentLength(curRequest), buffer, curRequest);
+                    int result = decodeRequestContent(start, HttpHeaders.getContentLength(curRequest), buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -80,7 +80,7 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_CHUNK_SIZE: {
-                    int result = encodeRequestChunkSize(start, buffer, curRequest);
+                    int result = decodeRequestChunkSize(start, buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -94,7 +94,7 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_CHUNKED_CONTENT: {
-                    int result = encodeRequestChunkContent(start, buffer, curRequest);
+                    int result = decodeRequestChunkContent(start, buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -104,7 +104,7 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_CHUNK_FOOTER: {
-                    int result = encodeRequestChunkFooter(start, buffer, curRequest);
+                    int result = decodeRequestChunkFooter(start, buffer, curRequest);
                     if (result == -1) {
                         return start;
                     }
@@ -129,7 +129,7 @@ public class HttpRequestDecoder {
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeRequestLine(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestLine(int start, ByteBuffer buffer, HttpRequest request) {
         List<Byte> contentList = new ArrayList<>();
         int limit = buffer.limit();
         int index = start;
@@ -170,7 +170,7 @@ public class HttpRequestDecoder {
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeRequestHeaders(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestHeaders(int start, ByteBuffer buffer, HttpRequest request) {
         //解析时创建，不能调用给上层提供的接口
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -226,7 +226,7 @@ public class HttpRequestDecoder {
      * @param request       HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeRequestContent(int start, int contentLength, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestContent(int start, int contentLength, ByteBuffer buffer, HttpRequest request) {
         //HeapByteBuffer
         ByteBuffer byteBuffer = ByteBuffer.allocate(contentLength);
         int limit = buffer.limit();
@@ -249,7 +249,7 @@ public class HttpRequestDecoder {
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeRequestChunkSize(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestChunkSize(int start, ByteBuffer buffer, HttpRequest request) {
         List<Byte> size = new ArrayList<>();
         int limit = buffer.limit();
         int index = start;
@@ -282,7 +282,7 @@ public class HttpRequestDecoder {
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeRequestChunkContent(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestChunkContent(int start, ByteBuffer buffer, HttpRequest request) {
         //先用list保存所有的chunk,当读取到最后一个chunk的时候，将list全部写入request
         List<Byte> content = new ArrayList<>();
         int limit = buffer.limit();
@@ -320,7 +320,7 @@ public class HttpRequestDecoder {
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int encodeRequestChunkFooter(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestChunkFooter(int start, ByteBuffer buffer, HttpRequest request) {
 
         int limit = buffer.limit();
         if (limit - start < 2) {

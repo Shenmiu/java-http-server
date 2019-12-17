@@ -1,9 +1,10 @@
 package cn.edu.nju.example.demo;
 
-import cn.edu.nju.example.demo.service.DemoMethodService;
-import cn.edu.nju.example.demo.service.DemoMimeService;
-import cn.edu.nju.example.demo.service.DemoNotSupportedService;
-import cn.edu.nju.example.demo.service.DemoStatusService;
+import cn.edu.nju.example.demo.service.HttpMethodService;
+import cn.edu.nju.example.demo.service.HttpMimeService;
+import cn.edu.nju.example.demo.service.HttpNotSupportedService;
+import cn.edu.nju.example.demo.service.HttpStatusService;
+import cn.edu.nju.nioserver.http.HttpService;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
 
@@ -16,18 +17,18 @@ import java.util.regex.Pattern;
 /**
  * 总控制器
  */
-public class DemoServiceController implements DemoService {
+public class HttpServiceController implements HttpService {
 
     private static final Pattern DEMO_URI_PATTERN = Pattern.compile("^/([a-z]+)/?(.*)$");
 
-    private static Map<DemoServiceName, DemoService> services;
+    private static Map<DemoServiceName, HttpService> services;
 
     static {
         services = Collections.synchronizedMap(new EnumMap<>(DemoServiceName.class));
-        services.put(DemoServiceName.NOT_SUPPORTED, new DemoNotSupportedService());
-        services.put(DemoServiceName.METHOD, new DemoMethodService());
-        services.put(DemoServiceName.STATUS, new DemoStatusService());
-        services.put(DemoServiceName.MIME, new DemoMimeService());
+        services.put(DemoServiceName.NOT_SUPPORTED, new HttpNotSupportedService());
+        services.put(DemoServiceName.METHOD, new HttpMethodService());
+        services.put(DemoServiceName.STATUS, new HttpStatusService());
+        services.put(DemoServiceName.MIME, new HttpMimeService());
     }
 
     @Override

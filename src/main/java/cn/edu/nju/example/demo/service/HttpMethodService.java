@@ -1,6 +1,6 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.example.demo.DemoService;
+import cn.edu.nju.nioserver.http.HttpService;
 import cn.edu.nju.nioserver.http.HttpMethod;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
@@ -8,7 +8,7 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-public class DemoMethodService implements DemoService {
+public class HttpMethodService implements HttpService {
 
     @Override
     public void service(HttpRequest request, HttpResponse response) {

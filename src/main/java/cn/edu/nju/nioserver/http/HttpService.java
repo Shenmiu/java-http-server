@@ -1,4 +1,4 @@
-package cn.edu.nju.example.demo;
+package cn.edu.nju.nioserver.http;
 
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
@@ -6,7 +6,7 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 /**
  * demo
  */
-public interface DemoService {
+public interface HttpService {
 
     /**
      * 对该请求进行相应处理

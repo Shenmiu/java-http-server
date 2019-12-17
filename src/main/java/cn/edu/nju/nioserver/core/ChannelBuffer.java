@@ -27,6 +27,7 @@ public class ChannelBuffer {
 
     /**
      * Append content of buffer that will be read then.
+     *
      * @param buffer
      * @param length
      */
@@ -36,6 +37,7 @@ public class ChannelBuffer {
 
     /**
      * Append content of buffer that will be written then.
+     *
      * @param buffer
      * @param length
      */
@@ -52,6 +54,7 @@ public class ChannelBuffer {
 
     /**
      * Insert content of buffer in the front of read buffer.
+     *
      * @param buffer
      * @param length
      */
@@ -61,6 +64,7 @@ public class ChannelBuffer {
 
     /**
      * Insert content of buffer in the front of write buffer.
+     *
      * @param buffer
      * @param length
      */
@@ -77,6 +81,7 @@ public class ChannelBuffer {
 
     /**
      * Poll all the content of read buffer.
+     *
      * @return
      */
     public ByteBuffer pollAllRead() {
@@ -85,6 +90,7 @@ public class ChannelBuffer {
 
     /**
      * Poll all the content of write buffer.
+     *
      * @return
      */
     public ByteBuffer pollAllWrite() {
@@ -99,6 +105,7 @@ public class ChannelBuffer {
 
     /**
      * poll content from read buffer to be processed by concrete protocol.
+     *
      * @param buffer
      * @return
      */
@@ -108,6 +115,7 @@ public class ChannelBuffer {
 
     /**
      * poll content from write buffer that will be written to socket channel.
+     *
      * @param buffer
      * @return
      */
@@ -127,6 +135,7 @@ public class ChannelBuffer {
 
     /**
      * Inquire the length of read buffer.
+     *
      * @return
      */
     public int lengthToRead() {
@@ -135,6 +144,7 @@ public class ChannelBuffer {
 
     /**
      * Inquire the length of write buffer.
+     *
      * @return
      */
     public int lengthToWrite() {
@@ -155,6 +165,7 @@ public class ChannelBuffer {
 
     /**
      * Read from socket channel with a fixed-length buffer.
+     *
      * @param socketChannel
      * @throws ClosedChannelException
      */
@@ -174,6 +185,7 @@ public class ChannelBuffer {
 
     /**
      * Write <b>all</b> the content of write buffer to socket channel.
+     *
      * @param socketChannel
      * @param protocol
      */

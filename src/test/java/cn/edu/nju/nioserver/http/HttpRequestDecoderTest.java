@@ -40,7 +40,7 @@ public class HttpRequestDecoderTest {
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
-        encoder.encode(0, byteBuffer, requestList);
+        encoder.decode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 2);
     }
 
@@ -55,7 +55,7 @@ public class HttpRequestDecoderTest {
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
-        int result = encoder.encode(0, byteBuffer, requestList);
+        int result = encoder.decode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 0);
     }
 
@@ -87,7 +87,7 @@ public class HttpRequestDecoderTest {
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
-        encoder.encode(0, byteBuffer, requestList);
+        encoder.decode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 1);
     }
 
@@ -121,10 +121,10 @@ public class HttpRequestDecoderTest {
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
 
-        encoder.encode(0, byteBuffer, requestList);
+        encoder.decode(0, byteBuffer, requestList);
 
         byteBuffer.put(another);
-        encoder.encode(source.length, byteBuffer, requestList);
+        encoder.decode(source.length, byteBuffer, requestList);
 
         assertEquals(requestList.size(), 1);
     }

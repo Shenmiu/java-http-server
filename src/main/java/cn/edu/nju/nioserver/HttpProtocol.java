@@ -13,7 +13,8 @@ import java.util.logging.Logger;
  **/
 public class HttpProtocol implements Protocol {
 
-    public HttpProtocol() {}
+    public HttpProtocol() {
+    }
 
     @Override
     public void process(ChannelBuffer channelBuffer) {

@@ -13,10 +13,10 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   字节流
      */
-    public static void decode(HttpResponse response, ByteBuffer buffer) {
-        decodeResponseLine(response, buffer);
-        decodeResponseHeaders(response, buffer);
-        decodeResponseContent(response, buffer);
+    public static void encode(HttpResponse response, ByteBuffer buffer) {
+        encodeResponseLine(response, buffer);
+        encodeResponseHeaders(response, buffer);
+        encodeResponseContent(response, buffer);
     }
 
     /**
@@ -25,7 +25,7 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   ByteBuffer
      */
-    private static void decodeResponseLine(HttpResponse response, ByteBuffer buffer) {
+    private static void encodeResponseLine(HttpResponse response, ByteBuffer buffer) {
         StringBuilder builder = new StringBuilder();
         //HTTP协议版本号
         builder.append(response.version().text())
@@ -46,7 +46,7 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   ByteBuffer
      */
-    private static void decodeResponseHeaders(HttpResponse response, ByteBuffer buffer) {
+    private static void encodeResponseHeaders(HttpResponse response, ByteBuffer buffer) {
         HttpHeaders httpHeaders = response.headers();
         Iterator<Map.Entry<String, String>> iterator = httpHeaders.headersIterator();
         StringBuilder builder = new StringBuilder();
@@ -71,7 +71,7 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   ByteBuffer
      */
-    private static void decodeResponseContent(HttpResponse response, ByteBuffer buffer) {
+    private static void encodeResponseContent(HttpResponse response, ByteBuffer buffer) {
         ByteBuffer content = response.content();
         buffer.put(content);
     }
