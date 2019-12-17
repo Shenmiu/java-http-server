@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by jjenkov on 19-10-2015.
  */
-public class HttpRequestEncoderTest {
+public class HttpRequestDecoderTest {
 
     @Test
     public void testParseHttpRequest() {
@@ -39,7 +39,7 @@ public class HttpRequestEncoderTest {
         ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
         encoder.encode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 2);
     }
@@ -54,7 +54,7 @@ public class HttpRequestEncoderTest {
         ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
         int result = encoder.encode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 0);
     }
@@ -86,7 +86,7 @@ public class HttpRequestEncoderTest {
         ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
         encoder.encode(0, byteBuffer, requestList);
         assertEquals(requestList.size(), 1);
     }
@@ -119,7 +119,7 @@ public class HttpRequestEncoderTest {
         ByteBuffer byteBuffer = ByteBuffer.allocate(source.length + another.length);
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestEncoder encoder = new HttpRequestEncoder();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
 
         encoder.encode(0, byteBuffer, requestList);
 

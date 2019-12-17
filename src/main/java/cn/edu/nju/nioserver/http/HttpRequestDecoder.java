@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HttpRequestEncoder {
+public class HttpRequestDecoder {
 
     /**
      * 初始状态

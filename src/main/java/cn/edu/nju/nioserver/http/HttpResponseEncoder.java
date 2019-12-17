@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 
-public class HttpResponseDecoder {
+public class HttpResponseEncoder {
 
     /**
      * 将HttpResponse编码为字节流
