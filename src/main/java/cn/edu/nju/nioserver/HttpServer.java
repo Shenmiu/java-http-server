@@ -2,10 +2,7 @@ package cn.edu.nju.nioserver;
 
 import cn.edu.nju.nioserver.core.ChannelBuffer;
 import cn.edu.nju.nioserver.core.ChannelPipeline;
-import cn.edu.nju.nioserver.core.ChannelPipelineFactory;
 import cn.edu.nju.nioserver.core.TCPServer;
-
-import java.nio.channels.Channel;
 
 /**
  * @author Aneureka

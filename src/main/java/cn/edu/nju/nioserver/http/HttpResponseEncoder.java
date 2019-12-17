@@ -18,23 +18,23 @@ public class HttpResponseEncoder {
      * @param buffer   字节流
      */
     public void encode(Object message, ByteBuffer buffer) {
-        switch (curState){
-            case ENCODE_INITIAL:{
+        switch (curState) {
+            case ENCODE_INITIAL: {
 
             }
-            case ENCODE_HEADER:{
+            case ENCODE_HEADER: {
 
             }
-            case ENCODE_FIXED_LENGTH_CONTENT:{
+            case ENCODE_FIXED_LENGTH_CONTENT: {
 
             }
             case ENCODE_VARIABLE_LENGTH_CONTENT: {
 
             }
-            case ENCODE_WAIT_CONTENT:{
+            case ENCODE_WAIT_CONTENT: {
 
             }
-            case ENCODE_EMPTY_CONTENT:{
+            case ENCODE_EMPTY_CONTENT: {
 
             }
         }

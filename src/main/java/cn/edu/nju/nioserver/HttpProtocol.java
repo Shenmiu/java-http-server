@@ -40,5 +40,6 @@ public class HttpProtocol implements ChannelHandler {
     }
 
     @Override
-    public void write(Object object) {}
+    public void write(Object object) {
+    }
 }

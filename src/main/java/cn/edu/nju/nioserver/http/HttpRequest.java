@@ -1,7 +1,5 @@
 package cn.edu.nju.nioserver.http;
 
-import java.nio.ByteBuffer;
-
 public class HttpRequest extends HttpMessage {
 
     /**

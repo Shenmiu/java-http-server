@@ -1,7 +1,6 @@
 package cn.edu.nju.nioserver.core;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SocketChannel;
@@ -26,6 +25,50 @@ public class ChannelBuffer implements ChannelHandler {
         this.writeBuffer = new ArrayList<>();
     }
 
+    private static void add(List<Byte> bufferToAdd, ByteBuffer buffer, int length) {
+        if (buffer == null) {
+            return;
+        }
+        for (int i = 0; i < length; i++) {
+            bufferToAdd.add(buffer.get(i));
+        }
+    }
+
+    private static void addFirst(List<Byte> bufferToAdd, ByteBuffer buffer, int length) {
+        if (buffer == null) return;
+        for (int i = 0; i < length; i++) {
+            bufferToAdd.add(0, buffer.get(i));
+        }
+    }
+
+    private static ByteBuffer pollAll(List<Byte> bufferToPoll) {
+        ByteBuffer buffer = ByteBuffer.allocate(length(bufferToPoll));
+        poll(bufferToPoll, buffer);
+        return buffer;
+    }
+
+    private static int poll(List<Byte> bufferToPoll, ByteBuffer buffer) {
+        int nBytesToPoll = Math.min(bufferToPoll.size(), buffer.capacity());
+        buffer.clear();
+        for (int i = 0; i < nBytesToPoll; i++) {
+            buffer.put(bufferToPoll.get(0));
+            bufferToPoll.remove(0);
+        }
+        return nBytesToPoll;
+    }
+
+    private static int length(List<Byte> buffer) {
+        return buffer.size();
+    }
+
+    private static byte[] array(List<Byte> buffer) {
+        byte[] res = new byte[buffer.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = buffer.get(i);
+        }
+        return res;
+    }
+
     /**
      * Append content of buffer that will be read then.
      *
@@ -44,13 +87,6 @@ public class ChannelBuffer implements ChannelHandler {
      */
     public void addToWrite(ByteBuffer buffer, int length) {
         add(this.writeBuffer, buffer, length);
-    }
-
-    private static void add(List<Byte> bufferToAdd, ByteBuffer buffer, int length) {
-        if (buffer == null) return;
-        for (int i = 0; i < length; i++) {
-            bufferToAdd.add(buffer.get(i));
-        }
     }
 
     /**
@@ -73,13 +109,6 @@ public class ChannelBuffer implements ChannelHandler {
         addFirst(writeBuffer, buffer, length);
     }
 
-    private static void addFirst(List<Byte> bufferToAdd, ByteBuffer buffer, int length) {
-        if (buffer == null) return;
-        for (int i = 0; i < length; i++) {
-            bufferToAdd.add(0, buffer.get(i));
-        }
-    }
-
     /**
      * Poll all the content of read buffer.
      *
@@ -96,12 +125,6 @@ public class ChannelBuffer implements ChannelHandler {
      */
     public ByteBuffer pollAllWrite() {
         return pollAll(this.writeBuffer);
-    }
-
-    private static ByteBuffer pollAll(List<Byte> bufferToPoll) {
-        ByteBuffer buffer = ByteBuffer.allocate(length(bufferToPoll));
-        poll(bufferToPoll, buffer);
-        return buffer;
     }
 
     /**
@@ -124,16 +147,6 @@ public class ChannelBuffer implements ChannelHandler {
         return poll(this.writeBuffer, buffer);
     }
 
-    private static int poll(List<Byte> bufferToPoll, ByteBuffer buffer) {
-        int nBytesToPoll = Math.min(bufferToPoll.size(), buffer.capacity());
-        buffer.clear();
-        for (int i = 0; i < nBytesToPoll; i++) {
-            buffer.put(bufferToPoll.get(0));
-            bufferToPoll.remove(0);
-        }
-        return nBytesToPoll;
-    }
-
     /**
      * Inquire the length of read buffer.
      *
@@ -150,18 +163,6 @@ public class ChannelBuffer implements ChannelHandler {
      */
     public int lengthToWrite() {
         return length(this.writeBuffer);
-    }
-
-    private static int length(List<Byte> buffer) {
-        return buffer.size();
-    }
-
-    private static byte[] array(List<Byte> buffer) {
-        byte[] res = new byte[buffer.size()];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = buffer.get(i);
-        }
-        return res;
     }
 
     /**

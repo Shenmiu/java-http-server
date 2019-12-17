@@ -7,5 +7,6 @@ package cn.edu.nju.nioserver.core;
  **/
 public interface ChannelHandler {
     void read(Object object);
+
     void write(Object object);
 }
