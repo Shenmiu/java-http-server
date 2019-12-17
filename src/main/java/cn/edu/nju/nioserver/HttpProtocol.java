@@ -1,22 +1,20 @@
 package cn.edu.nju.nioserver;
 
 import cn.edu.nju.nioserver.core.ChannelBuffer;
-import cn.edu.nju.nioserver.core.Protocol;
+import cn.edu.nju.nioserver.core.ChannelHandler;
 
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
 
 /**
  * @author Aneureka
  * @createdAt 2019-12-09 19:31
  * @description
  **/
-public class HttpProtocol implements Protocol {
+public class HttpProtocol implements ChannelHandler {
 
     public HttpProtocol() {
     }
 
-    @Override
     public void process(ChannelBuffer channelBuffer) {
         ByteBuffer buffer = ByteBuffer.allocate(ChannelBuffer.BUFFER_SIZE);
         channelBuffer.pollRead(buffer);
@@ -32,4 +30,15 @@ public class HttpProtocol implements Protocol {
             channelBuffer.addToWrite(buffer, nBytes);
         }
     }
+
+    @Override
+    public void read(Object object) {
+        if (object instanceof ChannelBuffer) {
+            ChannelBuffer channelBuffer = (ChannelBuffer) object;
+            process(channelBuffer);
+        }
+    }
+
+    @Override
+    public void write(Object object) {}
 }
