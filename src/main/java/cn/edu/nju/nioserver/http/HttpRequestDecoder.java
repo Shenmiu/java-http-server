@@ -1,5 +1,7 @@
 package cn.edu.nju.nioserver.http;
 
+import cn.edu.nju.nioserver.util.BytesUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -270,7 +272,7 @@ public class HttpRequestDecoder {
         cur = buffer.get(index);
 
 
-        this.curChunkLength = byte2Int(size);
+        this.curChunkLength = BytesUtil.bytes2Int(BytesUtil.list2ByteArray(size));
         return index + 1;
     }
 
@@ -369,20 +371,6 @@ public class HttpRequestDecoder {
             info[i] = list.get(i);
         }
         return new String(info, StandardCharsets.UTF_8);
-    }
-
-    /**
-     * 根据字节list获取int(暂时考虑int值超过byte范围，但不超过int范围)
-     *
-     * @param list
-     * @return
-     */
-    private int byte2Int(List<Byte> list) {
-        byte[] info = new byte[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            info[i] = list.get(i);
-        }
-        return Integer.parseInt(new String(info));
     }
 
     /**
