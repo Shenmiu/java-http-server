@@ -12,7 +12,7 @@ public class HttpResponse extends HttpMessage {
     public HttpResponse() {
     }
 
-    public HttpResponse(ByteBuffer content, HttpResponseStatus status, HttpVersion version, HttpHeaders headers) {
+    public HttpResponse(HttpContent content, HttpResponseStatus status, HttpVersion version, HttpHeaders headers) {
         super(version, content, headers);
         this.status = status;
     }

@@ -237,7 +237,7 @@ public class HttpRequestDecoder {
                 return -1;
             }
         }
-        request.setContent(byteBuffer);
+        request.setContent(new HttpContent(byteBuffer));
         return start + contentLength;
     }
 
@@ -343,7 +343,7 @@ public class HttpRequestDecoder {
         for (int i = 0; i < this.curChunk.size(); i++) {
             byteBuffer.put(this.curChunk.get(i));
         }
-        request.setContent(byteBuffer);
+        request.setContent(new HttpContent(byteBuffer));
         return index + 1;
     }
 

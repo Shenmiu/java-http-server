@@ -7,16 +7,37 @@ import java.util.Map;
 
 public class HttpResponseEncoder {
 
+    private State curState = State.ENCODE_INITIAL;
+
+    private ByteBuffer curContent;
+
     /**
      * 将HttpResponse编码为字节流
      *
      * @param response HttpResponse
      * @param buffer   字节流
      */
-    public static void encode(HttpResponse response, ByteBuffer buffer) {
-        encodeResponseLine(response, buffer);
-        encodeResponseHeaders(response, buffer);
-        encodeResponseContent(response, buffer);
+    public void encode(Object message, ByteBuffer buffer) {
+        switch (curState){
+            case ENCODE_INITIAL:{
+
+            }
+            case ENCODE_HEADER:{
+
+            }
+            case ENCODE_FIXED_LENGTH_CONTENT:{
+
+            }
+            case ENCODE_VARIABLE_LENGTH_CONTENT: {
+
+            }
+            case ENCODE_WAIT_CONTENT:{
+
+            }
+            case ENCODE_EMPTY_CONTENT:{
+
+            }
+        }
     }
 
     /**
@@ -25,7 +46,7 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   ByteBuffer
      */
-    private static void encodeResponseLine(HttpResponse response, ByteBuffer buffer) {
+    private void encodeResponseLine(HttpResponse response, ByteBuffer buffer) {
         StringBuilder builder = new StringBuilder();
         //HTTP协议版本号
         builder.append(response.version().text())
@@ -46,7 +67,7 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   ByteBuffer
      */
-    private static void encodeResponseHeaders(HttpResponse response, ByteBuffer buffer) {
+    private void encodeResponseHeaders(HttpResponse response, ByteBuffer buffer) {
         HttpHeaders httpHeaders = response.headers();
         Iterator<Map.Entry<String, String>> iterator = httpHeaders.headersIterator();
         StringBuilder builder = new StringBuilder();
@@ -71,8 +92,20 @@ public class HttpResponseEncoder {
      * @param response HttpResponse
      * @param buffer   ByteBuffer
      */
-    private static void encodeResponseContent(HttpResponse response, ByteBuffer buffer) {
-        ByteBuffer content = response.content();
+    private void encodeResponseContent(HttpResponse response, ByteBuffer buffer) {
+        ByteBuffer content = response.content().byteBuffer();
         buffer.put(content);
+    }
+
+    /**
+     * 当前HttpResponse的解析状态
+     */
+    private enum State {
+        ENCODE_INITIAL,
+        ENCODE_HEADER,
+        ENCODE_VARIABLE_LENGTH_CONTENT,
+        ENCODE_FIXED_LENGTH_CONTENT,
+        ENCODE_WAIT_CONTENT,
+        ENCODE_EMPTY_CONTENT
     }
 }

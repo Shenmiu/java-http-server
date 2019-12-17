@@ -11,7 +11,7 @@ public class HttpMessage {
     /**
      * 响应具体内容
      */
-    private ByteBuffer content;
+    private HttpContent content;
 
     /**
      * HTTP首部
@@ -21,7 +21,7 @@ public class HttpMessage {
     public HttpMessage() {
     }
 
-    public HttpMessage(HttpVersion version, ByteBuffer content, HttpHeaders headers) {
+    public HttpMessage(HttpVersion version, HttpContent content, HttpHeaders headers) {
         this.version = version;
         this.content = content;
         this.headers = headers;
@@ -31,7 +31,7 @@ public class HttpMessage {
         return version;
     }
 
-    public ByteBuffer content() {
+    public HttpContent content() {
         return content;
     }
 
@@ -43,7 +43,7 @@ public class HttpMessage {
         this.version = version;
     }
 
-    public void setContent(ByteBuffer content) {
+    public void setContent(HttpContent content) {
         this.content = content;
     }
 

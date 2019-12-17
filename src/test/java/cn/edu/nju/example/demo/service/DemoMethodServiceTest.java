@@ -58,7 +58,7 @@ public class DemoMethodServiceTest {
         HttpService service = new HttpMethodService();
         HttpResponse response = new HttpResponse();
         service.service(request, response);
-        String result = new String(response.content().array(), StandardCharsets.UTF_8);
+        String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
         assertEquals(result, "Hello, you have accessed a url with post method");
 
     }
@@ -89,7 +89,7 @@ public class DemoMethodServiceTest {
         HttpService service = new HttpMethodService();
         HttpResponse response = new HttpResponse();
         service.service(request, response);
-        String result = new String(response.content().array(), StandardCharsets.UTF_8);
+        String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
         assertEquals(result, "Hello, you have accessed a url with get method");
     }
 
