@@ -1,6 +1,5 @@
 package cn.edu.nju.nioserver.core;
 
-import java.net.Socket;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ public class ChannelPipeline {
 
     public ChannelPipeline(ChannelHandler... channelHandlers) {
         this();
-        for (ChannelHandler ch: channelHandlers) {
+        for (ChannelHandler ch : channelHandlers) {
             addHandler(ch);
         }
     }

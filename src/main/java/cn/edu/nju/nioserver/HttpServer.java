@@ -1,11 +1,11 @@
 package cn.edu.nju.nioserver;
 
+import cn.edu.nju.example.demo.HttpServiceController;
 import cn.edu.nju.nioserver.core.ChannelBuffer;
 import cn.edu.nju.nioserver.core.ChannelPipeline;
-import cn.edu.nju.nioserver.core.ChannelPipelineFactory;
 import cn.edu.nju.nioserver.core.TCPServer;
-
-import java.nio.channels.Channel;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
+import cn.edu.nju.nioserver.http.HttpResponseEncoder;
 
 /**
  * @author Aneureka
@@ -19,7 +19,9 @@ public class HttpServer {
     private TCPServer tcpServer;
 
     public HttpServer(int port) {
-        this.tcpServer = new TCPServer(port, () -> new ChannelPipeline(new ChannelBuffer(), new HttpProtocol()));
+        this.tcpServer = new TCPServer(port, () -> new ChannelPipeline(new ChannelBuffer(),
+                new HttpProtocol(new HttpRequestDecoder(), new HttpResponseEncoder(),
+                        HttpServiceController.controller)));
     }
 
     public HttpServer() {

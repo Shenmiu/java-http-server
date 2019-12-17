@@ -1,8 +1,5 @@
 package cn.edu.nju.nioserver.http;
 
-import cn.edu.nju.nioserver.http.HttpRequest;
-import cn.edu.nju.nioserver.http.HttpResponse;
-
 /**
  * demo
  */

@@ -1,7 +1,5 @@
 package cn.edu.nju.nioserver.http;
 
-import java.nio.ByteBuffer;
-
 public class HttpMessage {
     /**
      * 协议版本对象

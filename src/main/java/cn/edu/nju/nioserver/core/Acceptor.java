@@ -16,15 +16,11 @@ import java.util.logging.Logger;
  **/
 public class Acceptor implements Runnable {
 
-    private int port;
-
-    private ServerSocketChannel ss;
-
-    private Selector selector;
-
-    private ConcurrentLinkedQueue<SocketChannel> socketChannelQueue;
-
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private int port;
+    private ServerSocketChannel ss;
+    private Selector selector;
+    private ConcurrentLinkedQueue<SocketChannel> socketChannelQueue;
 
     public Acceptor(int port, ConcurrentLinkedQueue<SocketChannel> socketChannelQueue) {
         this.port = port;

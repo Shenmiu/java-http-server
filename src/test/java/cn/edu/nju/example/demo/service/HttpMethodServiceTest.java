@@ -1,9 +1,9 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.nioserver.http.HttpRequestDecoder;
-import cn.edu.nju.nioserver.http.HttpService;
 import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,18 +25,18 @@ import static org.junit.Assert.assertEquals;
 public class HttpMethodServiceTest {
 
     @Before
-    public void before() throws Exception {
+    public void before() {
     }
 
     @After
-    public void after() throws Exception {
+    public void after() {
     }
 
     /**
      * Method: service(HttpRequest request, HttpResponse response)
      */
     @Test
-    public void testService() throws Exception {
+    public void testService() {
         String httpRequest =
                 "POST / HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
@@ -67,7 +67,7 @@ public class HttpMethodServiceTest {
      * Method: service(HttpRequest request, HttpResponse response)
      */
     @Test
-    public void testService2() throws Exception {
+    public void testService2() {
         String httpRequest =
                 "GET / HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
