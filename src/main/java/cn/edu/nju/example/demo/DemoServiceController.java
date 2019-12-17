@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class DemoServiceController implements DemoService {
 
-    private static final Pattern DEMO_URI_PATTERN = Pattern.compile("(\\S+)/(\\S+)");
+    private static final Pattern DEMO_URI_PATTERN = Pattern.compile("^/([a-z]+)/?(.*)$");
 
     private static Map<DemoServiceName, DemoService> services;
 
