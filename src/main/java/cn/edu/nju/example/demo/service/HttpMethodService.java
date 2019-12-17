@@ -1,9 +1,9 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.nioserver.http.*;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import cn.edu.nju.nioserver.http.HttpMethod;
+import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpService;
 
 public class HttpMethodService implements HttpService {
 
@@ -14,7 +14,7 @@ public class HttpMethodService implements HttpService {
         responseBuilder.append("Hello, you have accessed a url with ")
                 .append(curMethod.name().toLowerCase())
                 .append(" method");
-        response.setContent(new HttpContent(ByteBuffer.wrap(responseBuilder.toString().getBytes(StandardCharsets.UTF_8))));
+        response.content().setByteBuffer(responseBuilder.toString());
     }
 
 }

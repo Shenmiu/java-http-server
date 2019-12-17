@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
  * @version 1.0
  * @since <pre>12月 17, 2019</pre>
  */
-public class DemoNotSupportedServiceTest {
+public class HttpNotSupportedServiceTest {
 
     @Before
     public void before() throws Exception {

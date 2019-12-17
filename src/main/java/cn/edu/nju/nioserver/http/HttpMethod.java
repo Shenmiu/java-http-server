@@ -95,6 +95,7 @@ public class HttpMethod {
      */
     public static HttpMethod valueOf(String name) {
         HttpMethod result = methodMap.get(name);
+        // TODO djy 不在此范围内的 HttpMethod 还需要支持？我看调用的地方没处理啊
         return result != null ? result : new HttpMethod(name);
     }
 
