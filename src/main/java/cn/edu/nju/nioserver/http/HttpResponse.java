@@ -8,6 +8,11 @@ public class HttpResponse extends HttpMessage {
     private HttpResponseStatus status;
 
     public HttpResponse() {
+        this(new HttpContent(), HttpResponseStatus.OK, HttpVersion.HTTP_1_1, HttpHeaders.defaultHeaders);
+    }
+
+    public HttpResponse(HttpContent content) {
+        this(content, HttpResponseStatus.OK, HttpVersion.HTTP_1_1, HttpHeaders.defaultHeaders);
     }
 
     public HttpResponse(HttpContent content, HttpResponseStatus status, HttpVersion version, HttpHeaders headers) {

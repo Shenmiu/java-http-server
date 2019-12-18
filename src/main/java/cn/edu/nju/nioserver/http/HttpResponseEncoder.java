@@ -20,77 +20,94 @@ public class HttpResponseEncoder {
      * 将HttpResponse编码为字节流
      *
      * @param message [HttpResponse || HttpContent]
-     * @param buffer  字节流
+     * @param target  字节流
      */
-    public void encode(Object message, ByteBuffer buffer) {
+    public void encode(Object message, List<Byte> target) {
         List<Byte> curContent = new ArrayList<>();
-
-        switch (curState) {
-            case ENCODE_INITIAL: {
-                if (message instanceof HttpResponse) {
-                    encodeResponseLine((HttpResponse) message, curContent);
-                    curState = State.ENCODE_HEADER;
-                } else {
-                    throw new IllegalArgumentException("data is error");
+        boolean isEnd = false;
+        while (!isEnd) {
+            switch (curState) {
+                case ENCODE_INITIAL: {
+                    if (message instanceof HttpResponse) {
+                        encodeResponseLine((HttpResponse) message, curContent);
+                        curState = State.ENCODE_HEADER;
+                    } else {
+                        throw new IllegalArgumentException("data is error");
+                    }
+                    //接下来直接处理Header，不break
                 }
-                //接下来直接处理Header，不break
-            }
-            case ENCODE_HEADER: {
-                //认定响应行与首部是绑定在一起，不需要继续判断当前的message是否为HttpResponse
-                HttpResponse response = (HttpResponse) message;
-                encodeResponseHeaders(response, curContent);
+                case ENCODE_HEADER: {
+                    //认定响应行与首部是绑定在一起，不需要继续判断当前的message是否为HttpResponse
+                    HttpResponse response = (HttpResponse) message;
+                    encodeResponseHeaders(response, curContent);
 
-                if (response.headers().containsContentLength()) {
-                    curState = State.ENCODE_FIXED_LENGTH_CONTENT;
-                } else if (response.headers().isChunkTransfer()) {
-                    curState = State.ENCODE_VARIABLE_LENGTH_CONTENT;
+                    if (response.headers().containsContentLength()) {
+                        curState = State.ENCODE_FIXED_LENGTH_CONTENT;
+                    } else if (response.headers().isChunkTransfer()) {
+                        curState = State.ENCODE_VARIABLE_LENGTH_CONTENT;
+                    }
+
+                    break;
                 }
+                case ENCODE_FIXED_LENGTH_CONTENT: {
+                    //认定响应行与首部是绑定在一起，已继续判断当前的message为HttpResponse
 
-                //接下来根据当前状态跳转处理定长content或者可变content，不break
-            }
-            case ENCODE_FIXED_LENGTH_CONTENT: {
-                //认定响应行与首部是绑定在一起，已继续判断当前的message为HttpResponse
-                encodeResponseContent((HttpResponse) message, curContent);
+                    encodeResponseContent((HttpResponse) message, curContent);
 
-                //response已经拿到了全部的内容
-                buffer.put(getBuffer(curContent));
-                //reset
-                reset();
-                break;
-            }
-            case ENCODE_VARIABLE_LENGTH_CONTENT: {
-                //判断为chunk的方式，先将响应行和响应首部绑定为一块进行发送
-                buffer.put(getBuffer(curContent));
+                    // buffer.put(getBuffer(curContent));
+                    //response已经拿到了全部的内容
+                    target.addAll(curContent);
 
-                //清空以放入接下来的块
-                curContent.clear();
-                curState = State.ENCODE_WAIT_CONTENT;
-
-                //不确定当前已判断为HttpResponse中HttpContent是否有数据，则不break交给下一个状态进行处理
-            }
-            case ENCODE_WAIT_CONTENT: {
-                //一旦进入此状态，会一直处于这个状态直到当前对象被销毁
-                //对于最后的空块，会由传入HttpContent来获取长度0和两个"\r\n"
-
-                if (message instanceof HttpContent) {
-                    encodeChunkContent((HttpContent) message, curContent);
-
-                    buffer.put(getBuffer(curContent));
+                    //reset
+                    reset();
+                    //结束当前解析
+                    isEnd = true;
+                    break;
+                }
+                case ENCODE_VARIABLE_LENGTH_CONTENT: {
+                    //判断为chunk的方式，先将响应行和响应首部绑定为一块进行发送
+                    target.addAll(curContent);
+                    //buffer.put(getBuffer(curContent));
 
                     //清空以放入接下来的块
                     curContent.clear();
-                } else if (message instanceof HttpResponse) {
+                    curState = State.ENCODE_WAIT_CONTENT;
+
+                    //不确定当前已判断为HttpResponse中HttpContent是否有数据
                     //可能已经放入了第一个块
-                    encodeChunkContent(((HttpResponse) message).content(), curContent);
+                    HttpResponse response = (HttpResponse) message;
+                    if (response.content() != null) {
+                        encodeChunkContent(((HttpResponse) message).content(), curContent);
 
-                    buffer.put(getBuffer(curContent));
+                        target.addAll(curContent);
+                        //buffer.put(getBuffer(curContent));
 
-                    //清空以放入接下来的块
-                    curContent.clear();
-                } else {
-                    throw new IllegalArgumentException("data is error");
+                        //清空以放入接下来的块
+                        curContent.clear();
+                    }
+                    isEnd = true;
+                    break;
                 }
-                break;
+                case ENCODE_WAIT_CONTENT: {
+                    //一旦进入此状态，会一直处于这个状态直到当前对象被销毁
+                    //对于最后的空块，会由传入HttpContent来获取长度0和两个"\r\n"
+
+                    if (message instanceof HttpContent) {
+                        encodeChunkContent((HttpContent) message, curContent);
+
+                        target.addAll(curContent);
+                        //buffer.put(getBuffer(curContent));
+
+                        //清空以放入接下来的块
+                        curContent.clear();
+                    } else {
+                        throw new IllegalArgumentException("data is error");
+                    }
+
+                    //当前解析结束
+                    isEnd = true;
+                    break;
+                }
             }
         }
     }
@@ -110,7 +127,7 @@ public class HttpResponseEncoder {
                 .append(response.status().code())
                 .append(" ")
                 //状态码消息
-                .append(response.status().codeAsText())
+                .append(response.status().reasonPhrase())
                 .append("\r\n");
         byte[] result = builder.toString().getBytes(StandardCharsets.UTF_8);
 

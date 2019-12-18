@@ -2,10 +2,7 @@ package cn.edu.nju.nioserver;
 
 import cn.edu.nju.nioserver.core.ChannelBuffer;
 import cn.edu.nju.nioserver.core.ChannelHandler;
-import cn.edu.nju.nioserver.http.HttpRequest;
-import cn.edu.nju.nioserver.http.HttpRequestDecoder;
-import cn.edu.nju.nioserver.http.HttpResponseEncoder;
-import cn.edu.nju.nioserver.http.HttpService;
+import cn.edu.nju.nioserver.http.*;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -33,28 +30,46 @@ public class HttpProtocol implements ChannelHandler {
     public void process(ChannelBuffer channelBuffer) {
         ByteBuffer buffer = ByteBuffer.allocate(ChannelBuffer.BUFFER_SIZE);
         channelBuffer.pollRead(buffer);
-
         int prevSize = requests.size();
         int bytesRead = decoder.decode(0, buffer, requests);
         // parse fail
         if (prevSize == requests.size()) {
             buffer.position(bytesRead);
-            int length = buffer.limit() - bytesRead - 1;
+            int length = buffer.limit() - bytesRead;
+            ByteBuffer cacheBuffer = ByteBuffer.allocate(length);
+            for (int i = bytesRead; i < buffer.limit(); i++) {
+                cacheBuffer.put(buffer.get(i));
+            }
+
+            //add回去进行缓存
+            channelBuffer.addFirstToRead(cacheBuffer, length);
         } else {
 
+            HttpResponse response = new HttpResponse();
+            //上层应用调用
+            controller.service(requests.get(requests.size() - 1), response);
+
+            //response encode(暂时不考虑分块)
+            List<Byte> content = new ArrayList<>();
+            encoder.encode(response, content);
+            ByteBuffer responseBuffer = ByteBuffer.allocate(content.size());
+            for (Byte e : content) {
+                responseBuffer.put(e);
+            }
+            channelBuffer.addToWrite(responseBuffer, content.size());
         }
 
-        byte[] bytesToWrite = ("HTTP/1.1 200 OK\r\n" +
-                "Content-Length: 38\r\n" +
-                "Content-Type: text/html\r\n" +
-                "\r\n" +
-                "<html><body>Hello World!</body></html><br/>").getBytes();
-        for (int i = 0; i < bytesToWrite.length; i += ChannelBuffer.BUFFER_SIZE) {
-            buffer.clear();
-            int nBytes = Math.min(ChannelBuffer.BUFFER_SIZE, bytesToWrite.length - i);
-            buffer.put(bytesToWrite, i, nBytes);
-            channelBuffer.addToWrite(buffer, nBytes);
-        }
+//        byte[] bytesToWrite = ("HTTP/1.1 200 OK\r\n" +
+//                "Content-Length: 38\r\n" +
+//                "Content-Type: text/html\r\n" +
+//                "\r\n" +
+//                "<html><body>Hello World!</body></html><br/>").getBytes();
+//        for (int i = 0; i < bytesToWrite.length; i += ChannelBuffer.BUFFER_SIZE) {
+//            buffer.clear();
+//            int nBytes = Math.min(ChannelBuffer.BUFFER_SIZE, bytesToWrite.length - i);
+//            buffer.put(bytesToWrite, i, nBytes);
+//            channelBuffer.addToWrite(buffer, nBytes);
+//        }
     }
 
     @Override

@@ -7,10 +7,20 @@ import java.util.Map;
 
 public class HttpHeaders {
 
+    public static final HttpHeaders defaultHeaders = new HttpHeaders();
+
     /**
      * 指定request的header内容
      */
     private Map<String, String> headers = new HashMap<>();
+
+    public HttpHeaders() {
+        headers.put(HttpHeaderNames.DATE, "Wed, 18 Dec 2019 04:47:57 GMT");
+    }
+
+    public HttpHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
 
     /**
      * 查询是否保持长连接

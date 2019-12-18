@@ -52,7 +52,7 @@ public class HttpServiceControllerTest {
         decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        HttpService service = new HttpServiceController();
+        HttpService service = HttpServiceController.controller;
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
@@ -82,7 +82,7 @@ public class HttpServiceControllerTest {
         decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        HttpService service = new HttpServiceController();
+        HttpService service = HttpServiceController.controller;
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         assertEquals(response.status(), HttpResponseStatus.NOT_FOUND);
