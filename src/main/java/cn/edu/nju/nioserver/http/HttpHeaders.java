@@ -1,6 +1,9 @@
 package cn.edu.nju.nioserver.http;
 
 
+import cn.edu.nju.nioserver.util.DateFormatter;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,7 +18,7 @@ public class HttpHeaders {
     private Map<String, String> headers = new HashMap<>();
 
     public HttpHeaders() {
-        headers.put(HttpHeaderNames.DATE, "Wed, 18 Dec 2019 04:47:57 GMT");
+        headers.put(HttpHeaderNames.DATE, DateFormatter.date2String(LocalDateTime.now()));
     }
 
     public HttpHeaders(Map<String, String> headers) {
