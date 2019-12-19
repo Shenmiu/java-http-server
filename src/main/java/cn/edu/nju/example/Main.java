@@ -19,6 +19,13 @@ public class Main {
         TcpServer server = new TcpServer(() -> new ChannelPipeline(new ByteToMessageCodec() {
             @Override
             protected boolean decode(List<Byte> in, Object out) {
+                // Consume bytes in the list [fake]
+                // in.clear();
+
+                // Consume part of bytes in the list [fake]
+                // List<Byte> toConsumeBytes = in.subList(0, 1);
+                // toConsumeBytes.clear();
+                // in = in.subList(1, in.size());
                 return false;
             }
 
