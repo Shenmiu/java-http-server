@@ -1,5 +1,7 @@
 package cn.edu.nju.nioserver;
 
+import cn.edu.nju.nioserver.http.HttpRequest;
+
 import java.util.List;
 
 /**
@@ -7,10 +9,10 @@ import java.util.List;
  * @createdAt 2019-12-19 11:10
  * @description
  **/
-public class HttpMessageCodec extends ByteToMessageCodec {
+public class HttpMessageCodec extends ByteToMessageCodec<HttpRequest> {
 
     @Override
-    protected boolean decode(List<Byte> in, Object out) {
+    protected boolean decode(List<Byte> in, List<HttpRequest> out) {
         return false;
     }
 

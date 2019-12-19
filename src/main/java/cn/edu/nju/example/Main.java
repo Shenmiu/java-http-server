@@ -1,9 +1,9 @@
 package cn.edu.nju.example;
 
 import cn.edu.nju.nioserver.ByteToMessageCodec;
-import cn.edu.nju.nioserver.HttpServer;
 import cn.edu.nju.nioserver.core.ChannelPipeline;
 import cn.edu.nju.nioserver.core.TcpServer;
+import cn.edu.nju.nioserver.http.HttpRequest;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        TcpServer server = new TcpServer(() -> new ChannelPipeline(new ByteToMessageCodec() {
+        TcpServer server = new TcpServer(() -> new ChannelPipeline(new ByteToMessageCodec<HttpRequest>() {
             @Override
-            protected boolean decode(List<Byte> in, Object out) {
+            protected boolean decode(List<Byte> in, List<HttpRequest> out) {
                 // Consume bytes in the list [fake]
                 // in.clear();
 
