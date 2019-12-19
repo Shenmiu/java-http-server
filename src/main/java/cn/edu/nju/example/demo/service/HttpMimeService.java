@@ -2,14 +2,8 @@ package cn.edu.nju.example.demo.service;
 
 import cn.edu.nju.nioserver.http.*;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
 import java.nio.charset.StandardCharsets;
 import sun.misc.BASE64Encoder;
-
-import sun.misc.BASE64Decoder;
-
-import javax.imageio.ImageIO;
 
 public class HttpMimeService implements HttpService {
     static BASE64Encoder encoder = new sun.misc.BASE64Encoder();
@@ -39,7 +33,7 @@ public class HttpMimeService implements HttpService {
 //            .append(biImage);
         //后面此处需要考虑如何设计，无法默认长度（可以是chunk的方式）
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + responseBuilder.toString().getBytes(StandardCharsets.UTF_8).length);
-        response.content().setString(responseBuilder.toString());
+        response.content().setContent(responseBuilder.toString());
 
     }
 }

@@ -5,6 +5,7 @@ package cn.edu.nju.example.demo;
  */
 public enum DemoServiceName {
     NOT_SUPPORTED("not supported"),
+    INDEX("index"),
     METHOD("method"),
     STATUS("status"),
     MIME("mime");
