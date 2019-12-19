@@ -25,7 +25,7 @@ public class HttpContent {
         this.content = content;
     }
 
-    public void setString(String content) {
+    public void setContent(String content) {
         this.content = ByteBuffer.wrap(content.getBytes(StandardCharsets.UTF_8));
     }
 }

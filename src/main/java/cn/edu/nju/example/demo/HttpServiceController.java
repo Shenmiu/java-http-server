@@ -1,9 +1,6 @@
 package cn.edu.nju.example.demo;
 
-import cn.edu.nju.example.demo.service.HttpMethodService;
-import cn.edu.nju.example.demo.service.HttpMimeService;
-import cn.edu.nju.example.demo.service.HttpNotSupportedService;
-import cn.edu.nju.example.demo.service.HttpStatusService;
+import cn.edu.nju.example.demo.service.*;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
 import cn.edu.nju.nioserver.http.HttpService;
@@ -20,20 +17,19 @@ import java.util.regex.Pattern;
 public class HttpServiceController implements HttpService {
 
     public static final HttpServiceController controller = new HttpServiceController();
-
-    private HttpServiceController() {
-    }
-
     private static final Pattern DEMO_URI_PATTERN = Pattern.compile("^/([a-z]+)/?(.*)$");
-
     private static Map<DemoServiceName, HttpService> services;
 
     static {
         services = Collections.synchronizedMap(new EnumMap<>(DemoServiceName.class));
         services.put(DemoServiceName.NOT_SUPPORTED, new HttpNotSupportedService());
+        services.put(DemoServiceName.INDEX, new HttpIndexService());
         services.put(DemoServiceName.METHOD, new HttpMethodService());
         services.put(DemoServiceName.STATUS, new HttpStatusService());
         services.put(DemoServiceName.MIME, new HttpMimeService());
+    }
+
+    private HttpServiceController() {
     }
 
     @Override
