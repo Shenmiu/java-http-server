@@ -1,8 +1,6 @@
 package cn.edu.nju.nioserver.core;
 
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Aneureka
@@ -11,42 +9,65 @@ import java.util.List;
  **/
 public class ChannelPipeline {
 
-    private List<ChannelHandler> channelHandlers;
+    private ChannelHandlerContext head;
+
+    private ChannelHandlerContext tail;
+
+    private SocketChannel channel;
 
     public ChannelPipeline() {
-        this.channelHandlers = new ArrayList<>();
+        this.channel = null;
     }
 
     public ChannelPipeline(ChannelHandler... channelHandlers) {
         this();
-        for (ChannelHandler ch : channelHandlers) {
-            addHandler(ch);
+        for (ChannelHandler handler : channelHandlers) {
+            add(handler);
         }
     }
 
-    public void addHandler(ChannelHandler handler) {
-        this.channelHandlers.add(handler);
+    public void bind(SocketChannel channel) {
+        this.channel = channel;
+        addFirst(new InitialChannelHandler(channel));
     }
 
-    public void handleUpstream(SocketChannel channel) {
-        System.out.println("Handle upstream");
-        for (int i = 0; i < channelHandlers.size(); i++) {
-            if (i == 0) {
-                channelHandlers.get(i).read(channel);
-            } else {
-                channelHandlers.get(i).read(channelHandlers.get(i - 1));
-            }
+    public boolean bound() {
+        return channel != null;
+    }
+
+    private void add(ChannelHandler handler) {
+        ChannelHandlerContext nextCtx = new ChannelHandlerContext(handler);
+        if (head == null) {
+            head = nextCtx;
+            tail = head;
+        } else {
+            tail.setNext(nextCtx);
+            nextCtx.setPrev(tail);
+            tail = nextCtx;
         }
     }
 
-    public void handleDownStream(SocketChannel channel) {
-        System.out.println("Handle downstream");
-        for (int i = channelHandlers.size() - 1; i >= 0; i--) {
-            if (i == 0) {
-                channelHandlers.get(i).write(channel);
-            } else {
-                channelHandlers.get(i).write(channelHandlers.get(i - 1));
-            }
+    private void addFirst(ChannelHandler handler) {
+        ChannelHandlerContext prevCtx = new ChannelHandlerContext(handler);
+        if (head == null) {
+            head = prevCtx;
+            tail = head;
+        } else {
+            head.setPrev(prevCtx);
+            prevCtx.setNext(head);
+            head = prevCtx;
+        }
+    }
+
+    public void sendUpstream() {
+        if (bound()) {
+            head.handleUpstream(null);
+        }
+    }
+
+    public void sendDownStream() {
+        if (bound()) {
+            tail.handleDownStream(null);
         }
     }
 }
