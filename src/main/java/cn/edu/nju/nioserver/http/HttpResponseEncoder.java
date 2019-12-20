@@ -96,7 +96,7 @@ public class HttpResponseEncoder {
                     //不确定当前已判断为HttpResponse中HttpContent是否有数据
                     //可能已经放入了第一个块
                     HttpResponse response = (HttpResponse) message;
-                    if (response.content() != null) {
+                    if (response.content() != null && !response.content().isEmpty()) {
                         encodeChunkContent(((HttpResponse) message).content(), curContent);
 
                         target.addAll(curContent);
