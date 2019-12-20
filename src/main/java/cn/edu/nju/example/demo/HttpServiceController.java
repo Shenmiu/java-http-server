@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 总控制器
@@ -30,7 +29,7 @@ public class HttpServiceController implements HttpService, ChannelHandler {
         HttpServiceController.services.put(DemoServiceName.STATUS, new HttpStatusService());
         HttpServiceController.services.put(DemoServiceName.MIME, new HttpMimeService());
         HttpServiceController.services.put(DemoServiceName.CONTENT_ENCODING, new HttpContentEncodingService());
-        HttpServiceController.services.put(DemoServiceName.COOKIE, new HttpCookieService());
+//        HttpServiceController.services.put(DemoServiceName.COOKIE, new HttpCookieService());
     }
 
     private HttpServiceController() {

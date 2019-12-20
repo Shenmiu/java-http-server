@@ -1,5 +1,6 @@
 package cn.edu.nju.example.demo.service;
 
+import cn.edu.nju.example.HttpService;
 import cn.edu.nju.example.demo.service.method.HttpMethodServiceFactory;
 import cn.edu.nju.example.demo.service.method.HttpMethodServiceInt;
 import cn.edu.nju.nioserver.http.*;
