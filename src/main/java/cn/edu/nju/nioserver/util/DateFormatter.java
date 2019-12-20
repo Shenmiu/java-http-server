@@ -1,7 +1,9 @@
 package cn.edu.nju.nioserver.util;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateFormatter {
@@ -18,7 +20,8 @@ public class DateFormatter {
         if (localDateTime == null) {
             throw new NullPointerException("localDateTime is null");
         }
-        return localDateTime.atOffset(ZoneOffset.UTC).format(formatter);
+        ZonedDateTime utcTime = localDateTime.atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC"));
+        return utcTime.format(formatter);
     }
 
     /**
