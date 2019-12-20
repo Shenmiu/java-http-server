@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class HttpMethodServicePost implements HttpMethodServiceInt {
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public boolean process(HttpRequest request, HttpResponse response) {
         String curContentType = request.headers().get(HttpHeaderNames.CONTENT_TYPE);
         switch (curContentType) {
             case HttpHeaderValues.TEXT_PLAIN:
@@ -23,6 +23,7 @@ public class HttpMethodServicePost implements HttpMethodServiceInt {
                 processAppFormUrlencoded(request, response);
                 break;
         }
+        return true;
     }
 
     private void processTextPlain(HttpRequest request, HttpResponse response) {

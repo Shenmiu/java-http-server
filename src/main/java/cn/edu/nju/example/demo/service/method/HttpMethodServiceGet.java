@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class HttpMethodServiceGet implements HttpMethodServiceInt {
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public boolean process(HttpRequest request, HttpResponse response) {
         StringBuilder responseBuilder = new StringBuilder();
         responseBuilder.append("You have send a get request.")
                 .append("The requested url params are: \n");
@@ -38,5 +38,6 @@ public class HttpMethodServiceGet implements HttpMethodServiceInt {
             responseBuilder.append(fileContent);
         }
         response.content().setContent(responseBuilder.toString());
+        return true;
     }
 }

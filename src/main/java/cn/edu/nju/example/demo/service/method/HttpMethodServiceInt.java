@@ -6,6 +6,8 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 public interface HttpMethodServiceInt {
     /**
      * 根据各方法分别处理
+     *
+     * @return Content-Length 是否需要修改
      */
-    void process(HttpRequest request, HttpResponse response);
+    boolean process(HttpRequest request, HttpResponse response);
 }
