@@ -2,7 +2,6 @@ package cn.edu.nju.nioserver.http;
 
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +35,13 @@ public class HttpRequestDecoderTest {
 
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
-        byteBuffer.put(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
-        encoder.decode(0, byteBuffer, requestList);
+        encoder.decode(buffer, requestList);
         assertEquals(requestList.size(), 2);
     }
 
@@ -51,11 +52,13 @@ public class HttpRequestDecoderTest {
                         "Host:www.hostname.com\r\n";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
-        byteBuffer.put(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
-        int result = encoder.decode(0, byteBuffer, requestList);
+        boolean result = encoder.decode(buffer, requestList);
         assertEquals(requestList.size(), 0);
     }
 
@@ -83,11 +86,13 @@ public class HttpRequestDecoderTest {
                         "\r\n";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
-        byteBuffer.put(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
-        encoder.decode(0, byteBuffer, requestList);
+        encoder.decode(buffer, requestList);
         assertEquals(requestList.size(), 1);
     }
 
@@ -116,15 +121,19 @@ public class HttpRequestDecoderTest {
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
         byte[] another = anotherChunk.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length + another.length);
-        byteBuffer.put(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder encoder = new HttpRequestDecoder();
 
-        encoder.decode(0, byteBuffer, requestList);
+        encoder.decode(buffer, requestList);
 
-        byteBuffer.put(another);
-        encoder.decode(source.length, byteBuffer, requestList);
+        for (byte e : another) {
+            buffer.add(e);
+        }
+        encoder.decode(buffer, requestList);
 
         assertEquals(requestList.size(), 1);
     }

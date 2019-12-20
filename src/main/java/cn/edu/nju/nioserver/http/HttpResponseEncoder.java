@@ -17,7 +17,7 @@ public class HttpResponseEncoder {
     private State curState = State.ENCODE_INITIAL;
 
     /**
-     * 将HttpResponse编码为字节流
+     * 将HttpResponse编码为字节流(调用者需要根据target的长度是否变化来判定是否有解析好的字节流)
      *
      * @param message [HttpResponse || HttpContent]
      * @param target  字节流

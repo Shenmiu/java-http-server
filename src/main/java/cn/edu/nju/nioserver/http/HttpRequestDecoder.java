@@ -31,28 +31,31 @@ public class HttpRequestDecoder {
 
 
     /**
-     * 解析请求，将固定格式包装进request中
+     * 解析请求，将固定格式包装进request中(调用者还是需要根据requests的长度是否变化来判定是否有解析好的request)
      *
-     * @param buffer   字节流缓冲区
+     * @param in       字节流缓冲区
      * @param requests 请求列表
      */
-    public int decode(int start, ByteBuffer buffer, List<HttpRequest> requests) {
-        int limit = buffer.limit();
+    public boolean decode(List<Byte> in, List<HttpRequest> requests) {
+        int limit = in.size();
+        int start = 0;
         while (start != limit) {
             switch (currentState) {
                 case READ_INITIAL: {
-                    int result = decodeRequestLine(start, buffer, curRequest);
+                    int result = decodeRequestLine(start, in, curRequest);
                     if (result == -1) {
-                        return start;
+                        removeUsedElement(start, in);
+                        return false;
                     }
                     start = result;
                     currentState = State.READ_HEADER;
                     break;
                 }
                 case READ_HEADER: {
-                    int result = decodeRequestHeaders(start, buffer, curRequest);
+                    int result = decodeRequestHeaders(start, in, curRequest);
                     if (result == -1) {
-                        return start;
+                        removeUsedElement(start, in);
+                        return false;
                     }
                     start = result;
 
@@ -64,9 +67,10 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_FIXED_LENGTH_CONTENT: {
-                    int result = decodeRequestContent(start, HttpHeaders.getContentLength(curRequest), buffer, curRequest);
+                    int result = decodeRequestContent(start, HttpHeaders.getContentLength(curRequest), in, curRequest);
                     if (result == -1) {
-                        return start;
+                        removeUsedElement(start, in);
+                        return false;
                     }
 
                     //当前请求编码结束
@@ -82,9 +86,10 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_CHUNK_SIZE: {
-                    int result = decodeRequestChunkSize(start, buffer, curRequest);
+                    int result = decodeRequestChunkSize(start, in);
                     if (result == -1) {
-                        return start;
+                        removeUsedElement(start, in);
+                        return false;
                     }
 
                     start = result;
@@ -96,9 +101,10 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_CHUNKED_CONTENT: {
-                    int result = decodeRequestChunkContent(start, buffer, curRequest);
+                    int result = decodeRequestChunkContent(start, in);
                     if (result == -1) {
-                        return start;
+                        removeUsedElement(start, in);
+                        return false;
                     }
 
                     start = result;
@@ -106,9 +112,10 @@ public class HttpRequestDecoder {
                     break;
                 }
                 case READ_CHUNK_FOOTER: {
-                    int result = decodeRequestChunkFooter(start, buffer, curRequest);
+                    int result = decodeRequestChunkFooter(start, in, curRequest);
                     if (result == -1) {
-                        return start;
+                        removeUsedElement(start, in);
+                        return false;
                     }
 
                     //当前请求分块传输结束
@@ -120,22 +127,25 @@ public class HttpRequestDecoder {
                 }
             }
         }
-        return start;
+
+        //当前in的内容已完全解析，跳出了循环，需要去除in的全部内容
+        removeUsedElement(start, in);
+        return true;
     }
 
     /**
      * 解析请求行[method uri version]
      *
      * @param start   开始读取请求行的第一个字符下标
-     * @param buffer  缓冲
+     * @param in      缓冲
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int decodeRequestLine(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestLine(int start, List<Byte> in, HttpRequest request) {
         List<Byte> contentList = new ArrayList<>();
-        int limit = buffer.limit();
         int index = start;
-        byte cur = buffer.get(start);
+        int limit = in.size();
+        byte cur = in.get(start);
         while (cur != '\r') {
             contentList.add(cur);
             index++;
@@ -145,12 +155,12 @@ public class HttpRequestDecoder {
                 return -1;
             }
 
-            cur = buffer.get(index);
+            cur = in.get(index);
         }
 
         index++;
         //read the '\n'
-        cur = buffer.get(index);
+        cur = in.get(index);
 
 
         String[] info = byte2String(contentList).split("\\s");
@@ -168,15 +178,15 @@ public class HttpRequestDecoder {
      * 解析请求首部
      *
      * @param start   开始读取请求行的第一个字符下标
-     * @param buffer  缓冲
+     * @param in      缓冲
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int decodeRequestHeaders(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestHeaders(int start, List<Byte> in, HttpRequest request) {
         //解析时创建，不能调用给上层提供的接口
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        int limit = buffer.limit();
+        int limit = in.size();
         int index = start;
         int countEnd = 0;
         while (countEnd != 2) {
@@ -185,7 +195,7 @@ public class HttpRequestDecoder {
             }
 
             List<Byte> contentList = new ArrayList<>();
-            byte cur = buffer.get(index);
+            byte cur = in.get(index);
             while (cur != '\r') {
                 //恢复
                 countEnd = 0;
@@ -196,13 +206,13 @@ public class HttpRequestDecoder {
                 if (index == limit) {
                     return -1;
                 }
-                cur = buffer.get(index);
+                cur = in.get(index);
             }
 
             //指向'\n'
             index++;
             //read the '\n'
-            cur = buffer.get(index);
+            cur = in.get(index);
             //指向下一行的起始字符
             index++;
 
@@ -224,17 +234,17 @@ public class HttpRequestDecoder {
      *
      * @param start         开始读取请求内容的第一个字符下标
      * @param contentLength content的长度
-     * @param buffer        缓冲
+     * @param in            缓冲
      * @param request       HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int decodeRequestContent(int start, int contentLength, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestContent(int start, int contentLength, List<Byte> in, HttpRequest request) {
         //HeapByteBuffer
         ByteBuffer byteBuffer = ByteBuffer.allocate(contentLength);
-        int limit = buffer.limit();
+        int limit = in.size();
         for (int i = 0; i < contentLength; i++) {
             if (start + i < limit) {
-                byteBuffer.put(buffer.get(start + i));
+                byteBuffer.put(in.get(start + i));
             } else {
                 return -1;
             }
@@ -246,16 +256,15 @@ public class HttpRequestDecoder {
     /**
      * 读取chunk的内容
      *
-     * @param start   开始读取chunk的第一个字符下标
-     * @param buffer  缓冲
-     * @param request HttpRequest
+     * @param start 开始读取chunk的第一个字符下标
+     * @param in    缓冲
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int decodeRequestChunkSize(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestChunkSize(int start, List<Byte> in) {
         List<Byte> size = new ArrayList<>();
-        int limit = buffer.limit();
+        int limit = in.size();
         int index = start;
-        byte cur = buffer.get(index);
+        byte cur = in.get(index);
         while (cur != '\r') {
             size.add(cur);
             index++;
@@ -264,12 +273,12 @@ public class HttpRequestDecoder {
                 return -1;
             }
 
-            cur = buffer.get(index);
+            cur = in.get(index);
         }
 
         index++;
         //当前为'\n'
-        cur = buffer.get(index);
+        cur = in.get(index);
 
 
         this.curChunkLength = BytesUtil.bytes2Int(BytesUtil.list2ByteArray(size));
@@ -279,18 +288,17 @@ public class HttpRequestDecoder {
     /**
      * 读取chunk的内容
      *
-     * @param start   开始读取chunk的第一个字符下标
-     * @param buffer  缓冲
-     * @param request HttpRequest
+     * @param start 开始读取chunk的第一个字符下标
+     * @param in    缓冲
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int decodeRequestChunkContent(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestChunkContent(int start, List<Byte> in) {
         //先用list保存所有的chunk,当读取到最后一个chunk的时候，将list全部写入request
         List<Byte> content = new ArrayList<>();
-        int limit = buffer.limit();
+        int limit = in.size();
         for (int i = 0; i < this.curChunkLength; i++) {
             if (start + i < limit) {
-                content.add(buffer.get(start + i));
+                content.add(in.get(start + i));
             } else {
                 return -1;
             }
@@ -302,9 +310,9 @@ public class HttpRequestDecoder {
             return -1;
         }
 
-        byte cur_r = buffer.get(index);
+        byte cur_r = in.get(index);
         index++;
-        byte cur_n = buffer.get(index);
+        byte cur_n = in.get(index);
         if (cur_r != '\r' || cur_n != '\n') {
             //消息是错误的
             return -1;
@@ -318,22 +326,22 @@ public class HttpRequestDecoder {
      * 读取chunk的footer，并将块缓存encode入request中(结束块也必须读完整，才可以encode)
      *
      * @param start   开始读取chunk的第一个字符下标
-     * @param buffer  缓冲
+     * @param in      缓冲
      * @param request HttpRequest
      * @return int 下一部分的开始下标，解析失败为-1
      */
-    private int decodeRequestChunkFooter(int start, ByteBuffer buffer, HttpRequest request) {
+    private int decodeRequestChunkFooter(int start, List<Byte> in, HttpRequest request) {
 
-        int limit = buffer.limit();
+        int limit = in.size();
         if (limit - start < 2) {
             // "\r\n"不完整
             return -1;
         }
 
         int index = start;
-        byte cur_r = buffer.get(index);
+        byte cur_r = in.get(index);
         index++;
-        byte cur_n = buffer.get(index);
+        byte cur_n = in.get(index);
         if (cur_r != '\r' || cur_n != '\n') {
             //消息是错误的
             return -1;
@@ -357,6 +365,18 @@ public class HttpRequestDecoder {
         curRequest = new HttpRequest();
         curChunk = new ArrayList<>();
         curChunkLength = -1;
+    }
+
+    /**
+     * 去除list中下标start之前的元素，不包括start
+     *
+     * @param start 需要开始保留元素的起始下标
+     * @param in    缓冲
+     */
+    private void removeUsedElement(int start, List<Byte> in) {
+        for (int i = 0; i < start; i++) {
+            in.remove(0);
+        }
     }
 
     /**

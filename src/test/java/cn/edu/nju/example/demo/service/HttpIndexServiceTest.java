@@ -52,7 +52,7 @@ public class HttpIndexServiceTest {
         byteBuffer.put(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
-        decoder.decode(0, byteBuffer, requestList);
+//        decoder.decode(0, byteBuffer, requestList); TODO fjj 已修改接口
 
         HttpRequest request = requestList.get(0);
         HttpService service = new HttpIndexService();

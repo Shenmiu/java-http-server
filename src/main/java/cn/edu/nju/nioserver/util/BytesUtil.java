@@ -17,13 +17,16 @@ public class BytesUtil {
      * @return int
      */
     public static int bytes2Int(byte[] bytes) {
-        int result = 0;
-        //将每个byte依次搬运到int相应的位置
-        result = bytes[0] & 0xff;
-        result = result << 8 | bytes[1] & 0xff;
-        result = result << 8 | bytes[2] & 0xff;
-        result = result << 8 | bytes[3] & 0xff;
-        return result;
+        StringBuilder builder = new StringBuilder();
+        for (byte e : bytes) {
+            if (e >= '0' && e <= '9') {
+                builder.append(e - '0');
+            } else {
+                throw new IllegalArgumentException("can not parse");
+            }
+
+        }
+        return Integer.parseInt(builder.toString());
     }
 
     /**
@@ -33,13 +36,7 @@ public class BytesUtil {
      * @return byte数组
      */
     public static byte[] int2Bytes(int num) {
-        byte[] bytes = new byte[4];
-        //通过移位运算，截取低8位的方式，将int保存到byte数组
-        bytes[0] = (byte) (num >>> 24);
-        bytes[1] = (byte) (num >>> 16);
-        bytes[2] = (byte) (num >>> 8);
-        bytes[3] = (byte) num;
-        return bytes;
+        return String.valueOf(num).getBytes();
     }
 
     /**
