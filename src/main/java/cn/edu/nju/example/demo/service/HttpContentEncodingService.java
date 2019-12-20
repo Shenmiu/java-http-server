@@ -16,6 +16,18 @@ import java.util.zip.GZIPOutputStream;
  * @date 2019/12/20
  */
 public class HttpContentEncodingService implements HttpService {
+    static byte[] compress(final String str) throws IOException {
+        if ((str == null) || (str.length() == 0)) {
+            return null;
+        }
+        ByteArrayOutputStream obj = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(obj);
+        gzip.write(str.getBytes(StandardCharsets.UTF_8));
+        gzip.flush();
+        gzip.close();
+        return obj.toByteArray();
+    }
+
     @Override
     public void service(HttpRequest request, HttpResponse response) {
         HttpMethod curMethod = request.method();
@@ -31,17 +43,5 @@ public class HttpContentEncodingService implements HttpService {
         response.headers().set(HttpHeaderNames.CONTENT_ENCODING, HttpHeaderValues.GZIP);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + compressed.length);
         response.content().setByteBuffer(ByteBuffer.wrap(compressed));
-    }
-
-    static byte[] compress(final String str) throws IOException {
-        if ((str == null) || (str.length() == 0)) {
-            return null;
-        }
-        ByteArrayOutputStream obj = new ByteArrayOutputStream();
-        GZIPOutputStream gzip = new GZIPOutputStream(obj);
-        gzip.write(str.getBytes(StandardCharsets.UTF_8));
-        gzip.flush();
-        gzip.close();
-        return obj.toByteArray();
     }
 }

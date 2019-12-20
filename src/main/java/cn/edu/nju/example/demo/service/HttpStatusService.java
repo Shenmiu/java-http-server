@@ -5,7 +5,6 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 import cn.edu.nju.nioserver.http.HttpResponseStatus;
 import cn.edu.nju.nioserver.http.HttpService;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -55,7 +54,7 @@ public class HttpStatusService implements HttpService {
                 result.append(new String(indexBuf.array(), 0, bytesRead, StandardCharsets.UTF_8));
                 indexBuf.rewind();
             }
-            result.insert(result.indexOf("</div>"),responseBuilder.toString());
+            result.insert(result.indexOf("</div>"), responseBuilder.toString());
             response.content().setContent(result.toString());
             statusChannel.close();
         } catch (IOException e) {
