@@ -28,7 +28,7 @@ public class ChannelPipeline {
 
     public void bind(SocketChannel channel) {
         this.channel = channel;
-        addFirst(new InitialChannelHandler(channel));
+        addFirst(new SocketChannelHandler(channel));
     }
 
     public boolean bound() {
