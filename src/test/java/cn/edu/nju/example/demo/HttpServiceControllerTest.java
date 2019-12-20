@@ -1,6 +1,10 @@
 package cn.edu.nju.example.demo;
 
-import cn.edu.nju.nioserver.http.*;
+import cn.edu.nju.example.HttpService;
+import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
+import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpResponseStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

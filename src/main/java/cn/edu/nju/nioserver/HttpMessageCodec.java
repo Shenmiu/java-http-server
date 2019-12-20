@@ -21,8 +21,8 @@ public class HttpMessageCodec extends ByteToMessageCodec<HttpRequest> {
      */
     private HttpResponseEncoder encoder;
 
-    //TODO 待商定
     public HttpMessageCodec() {
+        this(new HttpRequestDecoder(), new HttpResponseEncoder());
     }
 
     public HttpMessageCodec(HttpRequestDecoder decoder, HttpResponseEncoder encoder) {

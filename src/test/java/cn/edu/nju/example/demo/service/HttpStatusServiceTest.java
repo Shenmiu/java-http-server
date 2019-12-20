@@ -1,12 +1,15 @@
 package cn.edu.nju.example.demo.service;
 
 
-import cn.edu.nju.nioserver.http.*;
+import cn.edu.nju.example.HttpService;
+import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
+import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpResponseStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +41,13 @@ public class HttpStatusServiceTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
+        List<Byte> in = new ArrayList<>();
+        for (byte b : source) {
+            in.add(b);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
-//        decoder.decode(0, byteBuffer, requestList);
+        decoder.decode(in, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpService service = new HttpStatusService();

@@ -1,9 +1,9 @@
 package cn.edu.nju.example.demo.service;
 
+import cn.edu.nju.example.HttpService;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
 import cn.edu.nju.nioserver.http.HttpResponseStatus;
-import cn.edu.nju.nioserver.http.HttpService;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

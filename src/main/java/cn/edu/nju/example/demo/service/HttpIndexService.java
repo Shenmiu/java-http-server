@@ -1,8 +1,9 @@
 package cn.edu.nju.example.demo.service;
 
+import cn.edu.nju.example.HttpService;
+import cn.edu.nju.nioserver.http.HttpHeaderNames;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
-import cn.edu.nju.nioserver.http.HttpService;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -26,6 +27,7 @@ public class HttpIndexService implements HttpService {
                 result.append(new String(indexBuf.array(), 0, bytesRead, StandardCharsets.UTF_8));
                 indexBuf.rewind();
             }
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(result.toString().getBytes().length));
             response.content().setContent(result.toString());
             indexChannel.close();
         } catch (IOException e) {
