@@ -48,8 +48,7 @@ public class HttpMethodServiceTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
-        byteBuffer.put(source);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
         decoder.decode(0, byteBuffer, requestList);
@@ -79,8 +78,7 @@ public class HttpMethodServiceTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
-        byteBuffer.put(source);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
         decoder.decode(0, byteBuffer, requestList);

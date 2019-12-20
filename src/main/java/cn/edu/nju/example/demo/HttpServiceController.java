@@ -27,6 +27,7 @@ public class HttpServiceController implements HttpService {
         services.put(DemoServiceName.METHOD, new HttpMethodService());
         services.put(DemoServiceName.STATUS, new HttpStatusService());
         services.put(DemoServiceName.MIME, new HttpMimeService());
+        services.put(DemoServiceName.CONTENT_ENCODING, new HttpContentEncodingService());
     }
 
     private HttpServiceController() {

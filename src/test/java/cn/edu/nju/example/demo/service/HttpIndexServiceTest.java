@@ -4,8 +4,6 @@ import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpRequestDecoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
 import cn.edu.nju.nioserver.http.HttpService;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -24,19 +22,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class HttpIndexServiceTest {
 
-    @Before
-    public void before() throws Exception {
-    }
-
-    @After
-    public void after() throws Exception {
-    }
-
     /**
      * Method: service(HttpRequest request, HttpResponse response)
      */
     @Test
-    public void testService() throws Exception {
+    public void testService() {
         String httpRequest =
                 "GET / HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
@@ -48,8 +38,7 @@ public class HttpIndexServiceTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
-        byteBuffer.put(source);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
         decoder.decode(0, byteBuffer, requestList);
