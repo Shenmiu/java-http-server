@@ -1,9 +1,12 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.nioserver.http.*;
+import cn.edu.nju.nioserver.http.HttpHeaderNames;
+import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpService;
+import sun.misc.BASE64Encoder;
 
 import java.nio.charset.StandardCharsets;
-import sun.misc.BASE64Encoder;
 
 public class HttpMimeService implements HttpService {
     static BASE64Encoder encoder = new sun.misc.BASE64Encoder();
@@ -11,7 +14,7 @@ public class HttpMimeService implements HttpService {
     @Override
     public void service(HttpRequest request, HttpResponse response) {
         String path = request.uri();
-        String fileName = "src/main/resources/"+path;
+        String fileName = "src/main/resources/" + path;
         String type = path.substring(1);
         String pre = type.split("/")[0];
         String post = type.split("\\.")[type.split("\\.").length - 1];

@@ -23,6 +23,7 @@ public abstract class ByteToMessageCodec<T> implements ChannelHandler {
 
     /**
      * Consume the bytes until being successful to construct a target or failed.
+     *
      * @param in
      * @param out
      * @return
@@ -31,6 +32,7 @@ public abstract class ByteToMessageCodec<T> implements ChannelHandler {
 
     /**
      * Accept a object and convert it to list of byte.
+     *
      * @param in
      * @param out
      * @return

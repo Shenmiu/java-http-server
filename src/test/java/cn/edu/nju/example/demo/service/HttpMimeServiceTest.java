@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * DemoMimeService Tester.
+ *
  * @author 61990
  */
 public class HttpMimeServiceTest {
@@ -57,7 +58,7 @@ public class HttpMimeServiceTest {
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result, "You have get url with " +request.uri()+" and the mime type of file is image/jpg");
+        assertEquals(result, "You have get url with " + request.uri() + " and the mime type of file is image/jpg");
     }
 
 } 

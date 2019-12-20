@@ -1,13 +1,12 @@
 package cn.edu.nju.nioserver.util;
 
-import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class DateFormatter {
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
 
     /**
      * 将LocalDateTime转换为Http协议时间格式
@@ -19,7 +18,6 @@ public class DateFormatter {
         if (localDateTime == null) {
             throw new NullPointerException("localDateTime is null");
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
         return localDateTime.atOffset(ZoneOffset.UTC).format(formatter);
     }
 
