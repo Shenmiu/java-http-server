@@ -32,7 +32,7 @@ public class HttpContentEncodingServiceTest {
         ByteBuffer byteBuffer = ByteBuffer.wrap(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
-        decoder.decode(0, byteBuffer, requestList);
+//        decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpResponse response = new HttpResponse();

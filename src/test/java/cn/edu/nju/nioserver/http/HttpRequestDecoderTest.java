@@ -137,4 +137,59 @@ public class HttpRequestDecoderTest {
 
         assertEquals(requestList.size(), 1);
     }
+
+    @Test
+    public void testParseHttpRequestChunk2() {
+        String httpRequest =
+                "POST / HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Transfer-Encoding:chunked\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n";
+        String anotherChunk = "0\r\n" +
+                "\r\n";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        byte[] another = anotherChunk.getBytes(StandardCharsets.UTF_8);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+
+        encoder.decode(buffer, requestList);
+
+        for (byte e : another) {
+            buffer.add(e);
+        }
+        encoder.decode(buffer, requestList);
+
+        assertEquals(requestList.size(), 1);
+    }
+
+    @Test
+    public void testParseHttpRequest2() {
+        String httpRequest =
+                "POST / HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:0\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n";
+
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
+        assertEquals(requestList.size(), 1);
+    }
 }

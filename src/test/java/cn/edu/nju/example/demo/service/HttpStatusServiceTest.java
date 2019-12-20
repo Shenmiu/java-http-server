@@ -41,7 +41,7 @@ public class HttpStatusServiceTest {
         ByteBuffer byteBuffer = ByteBuffer.wrap(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
-        decoder.decode(0, byteBuffer, requestList);
+//        decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpService service = new HttpStatusService();

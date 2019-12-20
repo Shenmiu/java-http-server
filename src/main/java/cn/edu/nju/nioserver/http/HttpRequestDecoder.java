@@ -60,7 +60,14 @@ public class HttpRequestDecoder {
                     start = result;
 
                     if (HttpHeaders.hasContentLength(curRequest)) {
-                        currentState = State.READ_FIXED_LENGTH_CONTENT;
+                        //表示接下来的content为空，无需解析可以直接跳转READ_INITIAL状态
+                        if (HttpHeaders.getContentLength(curRequest) == 0) {
+                            requests.add(curRequest);
+                            //reset
+                            reset();
+                        } else {
+                            currentState = State.READ_FIXED_LENGTH_CONTENT;
+                        }
                     } else if (HttpHeaders.isChunkTransfer(curRequest)) {
                         currentState = State.READ_VARIABLE_LENGTH_CONTENT;
                     }
