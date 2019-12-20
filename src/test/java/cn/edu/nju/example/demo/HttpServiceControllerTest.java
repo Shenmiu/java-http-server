@@ -49,17 +49,23 @@ public class HttpServiceControllerTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestDecoder decoder = new HttpRequestDecoder();
-//        decoder.decode(0, byteBuffer, requestList); TODO fjj 已修改接口
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpService service = HttpServiceController.controller;
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result, "Hello, you have accessed a url with post method");
+        assertEquals(result, "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
+                "The data is: \n" +
+                "name: Professional Ajax\n" +
+                "publisher: Wiley\n");
     }
 
     /**
@@ -78,10 +84,13 @@ public class HttpServiceControllerTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestDecoder decoder = new HttpRequestDecoder();
-//        decoder.decode(0, byteBuffer, requestList); TODO fjj 已修改接口
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpService service = HttpServiceController.controller;

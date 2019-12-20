@@ -1,9 +1,9 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.example.HttpService;
 import cn.edu.nju.nioserver.http.HttpHeaderNames;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpService;
 import sun.misc.BASE64Encoder;
 
 import java.nio.charset.StandardCharsets;
@@ -34,9 +34,10 @@ public class HttpMimeService implements HttpService {
         responseBuilder.append("You have get url with " + path + " and ")
                 .append("the mime type of file is " + pre + "/" + post);
 //            .append(biImage);
-        //后面此处需要考虑如何设计，无法默认长度（可以是chunk的方式）
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + responseBuilder.toString().getBytes(StandardCharsets.UTF_8).length);
         response.content().setContent(responseBuilder.toString());
 
+        // 设置响应的 content-length
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+                new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8));
     }
 }

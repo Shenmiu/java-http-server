@@ -57,11 +57,5 @@ public class HttpServiceController implements HttpService, ChannelHandler {
 
         final DemoServiceName curServiceName = DemoServiceName.getServiceName(m.group(1));
         services.get(curServiceName).service(request, response);
-
-
-        // TODO 后面此处需要考虑如何设计，无法默认长度OPTIONS（可以是chunk的方式）
-        // 设置响应的 content-length
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8));
     }
 }

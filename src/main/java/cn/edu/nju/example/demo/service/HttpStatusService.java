@@ -1,9 +1,6 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.example.HttpService;
-import cn.edu.nju.nioserver.http.HttpRequest;
-import cn.edu.nju.nioserver.http.HttpResponse;
-import cn.edu.nju.nioserver.http.HttpResponseStatus;
+import cn.edu.nju.nioserver.http.*;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -61,6 +58,10 @@ public class HttpStatusService implements HttpService {
             e.printStackTrace();
         }
 
-        System.out.println();
+//        System.out.println();
+
+        // 设置响应的 content-length
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+                new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8));
     }
 }

@@ -6,6 +6,7 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +24,18 @@ public class HttpContentEncodingServiceTest {
                         "Host:www.hostname.com\r\n" +
                         "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
                         "Content-Type:application/x-www-form-urlencoded\r\n" +
-                        "Content-Length:0\r\n" +
+                        "Content-Length:40\r\n" +
                         "Connection: Keep-Alive\r\n" +
-                        "\r\n";
+                        "\r\n" +
+                        "name=Professional%20Ajax&publisher=Wiley";
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        List<Byte> in = new ArrayList<>();
-        for (byte b : source) {
-            in.add(b);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
         }
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestDecoder decoder = new HttpRequestDecoder();
-        decoder.decode(in, requestList);
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpResponse response = new HttpResponse();
