@@ -16,14 +16,11 @@ public class DateFormatter {
      * @return Http协议时间
      */
     public static String date2String(LocalDateTime localDateTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(localDateTime.getYear(), localDateTime.getMonthValue() - 1, localDateTime.getDayOfMonth(),
-                localDateTime.getHour(), localDateTime.getMinute(), localDateTime.getSecond());
-        // Locale.US用于将日期区域格式设为美国
-        SimpleDateFormat greenwichDate = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
-        // 时区设为格林尼治
-        greenwichDate.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return greenwichDate.format(cal.getTime());
+        if (localDateTime == null) {
+            throw new NullPointerException("localDateTime is null");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+        return localDateTime.atOffset(ZoneOffset.UTC).format(formatter);
     }
 
     /**
