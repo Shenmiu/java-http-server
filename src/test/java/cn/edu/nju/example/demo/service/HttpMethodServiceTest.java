@@ -32,13 +32,10 @@ public class HttpMethodServiceTest {
     public void after() {
     }
 
-    /**
-     * Method: service(HttpRequest request, HttpResponse response)
-     */
     @Test
-    public void testService() {
+    public void testServicePost1() {
         String httpRequest =
-                "POST / HTTP/1.1\r\n" +
+                "POST /method HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
                         "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
                         "Content-Type:application/x-www-form-urlencoded\r\n" +
@@ -58,17 +55,72 @@ public class HttpMethodServiceTest {
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result, "Hello, you have accessed a url with post method");
-
+        assertEquals(result, "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
+                "The data is: \n" +
+                "name: Professional Ajax\n" +
+                "publisher: Wiley\n");
     }
 
-    /**
-     * Method: service(HttpRequest request, HttpResponse response)
-     */
     @Test
-    public void testService2() {
+    public void testServicePost2() {
         String httpRequest =
-                "GET / HTTP/1.1\r\n" +
+                "POST /method HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:text/plain\r\n" +
+                        "Content-Length:40\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "name=Professional%20Ajax&publisher=Wiley";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
+        byteBuffer.put(source);
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestDecoder decoder = new HttpRequestDecoder();
+        decoder.decode(0, byteBuffer, requestList);
+
+        HttpRequest request = requestList.get(0);
+        HttpService service = new HttpMethodService();
+        HttpResponse response = new HttpResponse();
+        service.service(request, response);
+        String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
+        assertEquals(result, "You have send a post request with content type = text/plain.\n" +
+                "The plain text is: name=Professional%20Ajax&publisher=Wiley");
+    }
+
+    @Test
+    public void testServiceGet1() {
+        String httpRequest =
+                "GET /method/hello HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:40\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "name=Professional%20Ajax&publisher=Wiley";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(source.length);
+        byteBuffer.put(source);
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestDecoder decoder = new HttpRequestDecoder();
+        decoder.decode(0, byteBuffer, requestList);
+
+        HttpRequest request = requestList.get(0);
+        HttpService service = new HttpMethodService();
+        HttpResponse response = new HttpResponse();
+        service.service(request, response);
+        String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
+        assertEquals(result, "You have send a get request.The requested url params are: \n" +
+                "Requested file hello does not exist.");
+    }
+
+    @Test
+    public void testServiceGet2() {
+        String httpRequest =
+                "GET /method/test_file.txt?a=1&b=2&a=3 HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
                         "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
                         "Content-Type:application/x-www-form-urlencoded\r\n" +
@@ -88,7 +140,13 @@ public class HttpMethodServiceTest {
         HttpResponse response = new HttpResponse();
         service.service(request, response);
         String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result, "Hello, you have accessed a url with get method");
+        assertEquals(result, "You have send a get request." +
+                "The requested url params are: \n" +
+                "a: 1\n" +
+                "a: 3\n" +
+                "b: 2\n" +
+                "Requested file test_file.txt's content is: \n" +
+                "HELLO test_file.txt");
     }
 
 } 

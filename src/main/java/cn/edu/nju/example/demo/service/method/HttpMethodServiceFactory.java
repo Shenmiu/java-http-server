@@ -15,15 +15,15 @@ public class HttpMethodServiceFactory {
             return new HttpMethodServiceHead();
         } else if (method == HttpMethod.OPTIONS) {
             return new HttpMethodServiceOptions();
-        } else if (method == HttpMethod.PATCH) {
-            return new HttpMethodServicePatch();
         } else if (method == HttpMethod.POST) {
             return new HttpMethodServicePost();
         } else if (method == HttpMethod.PUT) {
             return new HttpMethodServicePut();
         } else if (method == HttpMethod.TRACE) {
-            // TODO fjj http/1.1 之后加的，要支持吗？？
             return new HttpMethodServiceTrace();
+        } else if (method == HttpMethod.PATCH) {
+            // HTTP/1.1 不包含 patch
+            return new HttpMethodServiceNotSupported();
         } else {
             return new HttpMethodServiceNotSupported();
         }
