@@ -3,30 +3,22 @@ package cn.edu.nju.example.demo.service;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpRequestDecoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
-import cn.edu.nju.nioserver.http.HttpService;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
-/**
- * HttpIndexService Tester.
- *
- * @author cuihua
- * @version 1.0
- * @since <pre>12月 19, 2019</pre>
- */
-public class HttpIndexServiceTest {
+public class HttpContentEncodingServiceTest {
 
-    /**
-     * Method: service(HttpRequest request, HttpResponse response)
-     */
+    private HttpContentEncodingService service = new HttpContentEncodingService();
+
     @Test
-    public void testService() {
+    public void service() {
         String httpRequest =
                 "GET / HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
@@ -36,20 +28,22 @@ public class HttpIndexServiceTest {
                         "Connection: Keep-Alive\r\n" +
                         "\r\n" +
                         "name=Professional%20Ajax&publisher=Wiley";
-
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
         ByteBuffer byteBuffer = ByteBuffer.wrap(source);
         List<HttpRequest> requestList = new ArrayList<>();
         HttpRequestDecoder decoder = new HttpRequestDecoder();
-//        decoder.decode(0, byteBuffer, requestList); TODO fjj 已修改接口
+        decoder.decode(0, byteBuffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        HttpService service = new HttpIndexService();
         HttpResponse response = new HttpResponse();
+
         service.service(request, response);
-        String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result.substring(0, 15), "<!DOCTYPE html>");
+
+        try {
+            byte[] expect = HttpContentEncodingService.compress("This is raw content.");
+            assertArrayEquals(expect, response.content().byteBuffer().array());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-
-} 
+}

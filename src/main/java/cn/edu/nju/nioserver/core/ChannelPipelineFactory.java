@@ -8,6 +8,7 @@ package cn.edu.nju.nioserver.core;
 public interface ChannelPipelineFactory {
     /**
      * Create a channel pipeline instance.
+     *
      * @return
      */
     ChannelPipeline getPipeline();

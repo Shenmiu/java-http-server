@@ -2,17 +2,19 @@ package cn.edu.nju.nioserver;
 
 import cn.edu.nju.nioserver.core.ChannelHandler;
 import cn.edu.nju.nioserver.core.ChannelHandlerContext;
-import cn.edu.nju.nioserver.http.*;
+import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
+import cn.edu.nju.nioserver.http.HttpResponseEncoder;
+import cn.edu.nju.nioserver.http.HttpService;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @deprecated Use {@link HttpMessageCodec} instead, and remove this one.
  * @author Aneureka
  * @createdAt 2019-12-09 19:31
  * @description
+ * @deprecated Use {@link HttpMessageCodec} instead, and remove this one.
  **/
 public class HttpProtocol implements ChannelHandler {
 

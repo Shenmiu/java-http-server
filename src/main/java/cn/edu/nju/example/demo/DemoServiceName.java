@@ -8,7 +8,8 @@ public enum DemoServiceName {
     INDEX("index"),
     METHOD("method"),
     STATUS("status"),
-    MIME("mime");
+    MIME("mime"),
+    CONTENT_ENCODING("content-encoding");
 
     private String value;
 
