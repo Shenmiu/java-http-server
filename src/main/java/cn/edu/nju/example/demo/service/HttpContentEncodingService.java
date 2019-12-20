@@ -1,5 +1,6 @@
 package cn.edu.nju.example.demo.service;
 
+import cn.edu.nju.example.HttpService;
 import cn.edu.nju.nioserver.http.*;
 
 import java.io.ByteArrayOutputStream;
@@ -16,6 +17,7 @@ import java.util.zip.GZIPOutputStream;
  * @date 2019/12/20
  */
 public class HttpContentEncodingService implements HttpService {
+
     static byte[] compress(final String str) throws IOException {
         if ((str == null) || (str.length() == 0)) {
             return null;

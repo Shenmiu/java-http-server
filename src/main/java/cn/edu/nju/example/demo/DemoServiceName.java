@@ -9,7 +9,8 @@ public enum DemoServiceName {
     METHOD("method"),
     STATUS("status"),
     MIME("mime"),
-    CONTENT_ENCODING("content-encoding");
+    CONTENT_ENCODING("content-encoding"),
+    COOKIE("cookie");
 
     private String value;
 

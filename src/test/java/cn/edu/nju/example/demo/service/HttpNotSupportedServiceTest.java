@@ -1,6 +1,10 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.nioserver.http.*;
+import cn.edu.nju.example.HttpService;
+import cn.edu.nju.nioserver.http.HttpRequest;
+import cn.edu.nju.nioserver.http.HttpRequestDecoder;
+import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpResponseStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,10 +49,13 @@ public class HttpNotSupportedServiceTest {
                         "name=Professional%20Ajax&publisher=Wiley";
 
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestDecoder decoder = new HttpRequestDecoder();
-//        decoder.decode(0, byteBuffer, requestList); TODO fjj 已修改接口
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpService service = new HttpNotSupportedService();

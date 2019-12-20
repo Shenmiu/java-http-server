@@ -29,10 +29,13 @@ public class HttpContentEncodingServiceTest {
                         "\r\n" +
                         "name=Professional%20Ajax&publisher=Wiley";
         byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
-        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
         List<HttpRequest> requestList = new ArrayList<>();
-        HttpRequestDecoder decoder = new HttpRequestDecoder();
-//        decoder.decode(0, byteBuffer, requestList);
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
         HttpResponse response = new HttpResponse();

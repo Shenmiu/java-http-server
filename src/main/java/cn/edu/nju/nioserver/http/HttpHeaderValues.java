@@ -5,6 +5,10 @@ package cn.edu.nju.nioserver.http;
  */
 public class HttpHeaderValues {
     /**
+     * {@code "text/plain"}
+     */
+    public static final String TEXT_PLAIN = "text/plain";
+    /**
      * {@code "application/json"}
      */
     public static final String APPLICATION_JSON = "application/json";

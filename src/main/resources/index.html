@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Network Representation</title>
+    <title>HTTP 服务器场景展示</title>
 </head>
 <body>
 <h1>HTTP 方法展示</h1>
@@ -32,6 +32,18 @@
 <h1>Http 内容编码展示</h1>
 <ul>
     <li><a href="localhost:8080/content-encoding/gzip">gzip</a></li>
+</ul>
+<h1>Http Cookie 展示</h1>
+<h2>会话 Cookie 展示</h2>
+<form action="localhost:8080/cookie/session" method="post">
+    <label>
+        <input name="name" type="text">
+    </label>
+    <input type="submit" value="登录">
+</form>
+<h2>持久化 Cookie 展示</h2>
+<ul>
+    <li><a href="localhost:8080/cookie/permanent">持久化 Cookie</a></li>
 </ul>
 </body>
 </html>
