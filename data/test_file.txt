@@ -1,1 +1,0 @@
-HELLO test_file.txt, content2

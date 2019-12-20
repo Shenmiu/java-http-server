@@ -1,5 +1,6 @@
 package cn.edu.nju.example.demo.service.method;
 
+import cn.edu.nju.example.demo.service.method.util.FileUtil;
 import cn.edu.nju.example.demo.service.method.util.QueryStringDecoder;
 import cn.edu.nju.nioserver.http.HttpHeaderNames;
 import cn.edu.nju.nioserver.http.HttpHeaderValues;
@@ -29,11 +30,9 @@ public class HttpMethodServicePost implements HttpMethodServiceInt {
     private void processTextPlain(HttpRequest request, HttpResponse response) {
         ByteBuffer contentBuf = request.content().byteBuffer();
         String plainText = new String(contentBuf.array(), 0, contentBuf.array().length, StandardCharsets.UTF_8);
-        StringBuilder responseBuilder = new StringBuilder();
-        responseBuilder.append("You have send a post request with content type = text/plain.\n")
-                .append("The plain text is: ")
-                .append(plainText);
-        response.content().setContent(responseBuilder.toString());
+        processData(request, response,
+                "You have send a post request with content type = text/plain.\n" +
+                        "The plain text is: " + plainText);
     }
 
     private void processAppFormUrlencoded(HttpRequest request, HttpResponse response) {
@@ -55,6 +54,19 @@ public class HttpMethodServicePost implements HttpMethodServiceInt {
         } catch (RuntimeException e) {
             responseBuilder.append("The body cannot be resolved.\n");
         }
-        response.content().setContent(responseBuilder.toString());
+        processData(request, response, responseBuilder.toString());
+    }
+
+    private void processData(HttpRequest request, HttpResponse response, String content) {
+        String curFileName = FileUtil.realFileName(request.uri());
+        String wantedFilePreContent = FileUtil.read(curFileName);
+        if (wantedFilePreContent == null) {
+            FileUtil.write(curFileName, content, true);
+        } else {
+            FileUtil.write(curFileName, content, false);
+        }
+
+        String nowContent = FileUtil.read(curFileName);
+        response.content().setContent(nowContent);
     }
 }

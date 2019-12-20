@@ -1,0 +1,7 @@
+HELLO post_file.txt, content2
+You have send a post request with content type = application/x-www-form-urlencoded.
+The data is: 
+name: Professional Ajax
+publisher: Wiley
+You have send a post request with content type = text/plain.
+The plain text is: name=hello&kitty=biu

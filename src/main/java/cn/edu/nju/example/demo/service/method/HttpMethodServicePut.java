@@ -14,8 +14,8 @@ public class HttpMethodServicePut implements HttpMethodServiceInt {
         String contentStr = new String(contentBuf.array(), 0, contentBuf.array().length, StandardCharsets.UTF_8);
 
         String curFileName = FileUtil.realFileName(request.uri());
-        String wantedFileContent = FileUtil.read(curFileName);
-        if (wantedFileContent == null) {
+        String wantedFilePreContent = FileUtil.read(curFileName);
+        if (wantedFilePreContent == null) {
             // 目标资源不存在，并且PUT方法成功创建了一份，那么源头服务器必须返回201 (Created) 来通知客户端资源已创建。
             response.setStatus(HttpResponseStatus.CREATED);
         } else {

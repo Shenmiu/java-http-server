@@ -23,13 +23,6 @@ public class FileUtil {
     }
 
     /**
-     * 新添加文件
-     */
-    public static boolean add(String fileName) {
-        return true;
-    }
-
-    /**
      * 读资源文件
      */
     public static String readResourceFile(String resourceFileName) {
@@ -64,6 +57,7 @@ public class FileUtil {
             result.append(new String(buf.array(), 0, bytesRead, StandardCharsets.UTF_8));
             buf.rewind();
         }
+        channel.close();
         return result.toString();
     }
 
@@ -80,6 +74,7 @@ public class FileUtil {
                 content = preContent == null ? content : preContent.concat(content);
             }
             channel.write(ByteBuffer.wrap(content.getBytes()));
+            channel.close();
             return true;
         } catch (IOException e) {
             return false;

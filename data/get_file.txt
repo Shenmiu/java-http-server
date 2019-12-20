@@ -1,0 +1,1 @@
+HELLO get_file's content!!!
