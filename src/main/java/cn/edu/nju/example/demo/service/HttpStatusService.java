@@ -66,6 +66,6 @@ public class HttpStatusService implements HttpService {
 
         // 设置响应的 content-length
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8));
+                String.valueOf(response.content().byteBuffer().array().length));
     }
 }

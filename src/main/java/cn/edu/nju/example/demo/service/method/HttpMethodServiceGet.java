@@ -23,13 +23,7 @@ public class HttpMethodServiceGet implements HttpMethodServiceInt {
             }
         }
 
-        // 找到真正的 fileName
-        String curFileName = request.uri().substring(8);
-        int paramMarkIndex = curFileName.indexOf("?");
-        if (paramMarkIndex != -1) {
-            curFileName = curFileName.substring(0, paramMarkIndex);
-        }
-
+        String curFileName = FileUtil.realFileName(request.uri());
         String fileContent = FileUtil.read(curFileName);
         if (fileContent == null) {
             responseBuilder.append("Requested file ").append(curFileName).append(" does not exist.");

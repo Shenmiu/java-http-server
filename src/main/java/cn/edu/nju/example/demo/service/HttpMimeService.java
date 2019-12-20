@@ -6,8 +6,6 @@ import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
 import sun.misc.BASE64Encoder;
 
-import java.nio.charset.StandardCharsets;
-
 public class HttpMimeService implements HttpService {
     static BASE64Encoder encoder = new sun.misc.BASE64Encoder();
 
@@ -38,6 +36,6 @@ public class HttpMimeService implements HttpService {
 
         // 设置响应的 content-length
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8));
+                String.valueOf(response.content().byteBuffer().array().length));
     }
 }

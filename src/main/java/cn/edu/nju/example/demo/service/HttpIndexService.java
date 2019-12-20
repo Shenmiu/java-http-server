@@ -10,9 +10,10 @@ public class HttpIndexService implements HttpService {
 
     @Override
     public void service(HttpRequest request, HttpResponse response) {
-        String indexContent = FileUtil.read("index.html");
+        String indexContent = FileUtil.readResourceFile("index.html");
         response.content().setContent(indexContent == null ? "Read file failed." : indexContent);
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.content().byteBuffer().array().length));
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+                String.valueOf(response.content().byteBuffer().array().length));
     }
 
 }

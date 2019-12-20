@@ -1,6 +1,7 @@
 package cn.edu.nju.example.demo.service;
 
 import cn.edu.nju.example.HttpService;
+import cn.edu.nju.example.demo.service.method.util.FileUtil;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpRequestDecoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
@@ -8,7 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +157,50 @@ public class HttpMethodServiceTest {
                 "b: 2\n" +
                 "Requested file test_file.txt's content is: \n" +
                 "HELLO test_file.txt");
+    }
+
+    @Test
+    public void testServicePut() {
+        String httpRequest =
+                "PUT /method/test_file.txt HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:29\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "HELLO test_file.txt, content1" +
+                        "PUT /method/test_file.txt HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:29\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "HELLO test_file.txt, content2";
+
+        byte[] source = httpRequest.getBytes(StandardCharsets.UTF_8);
+        List<Byte> buffer = new ArrayList<>();
+        for (byte e : source) {
+            buffer.add(e);
+        }
+        List<HttpRequest> requestList = new ArrayList<>();
+        HttpRequestDecoder encoder = new HttpRequestDecoder();
+        encoder.decode(buffer, requestList);
+
+        HttpService service = new HttpMethodService();
+
+        HttpRequest request1 = requestList.get(0);
+        HttpResponse response1 = new HttpResponse();
+        service.service(request1, response1);
+        String result1 = FileUtil.read("test_file.txt");
+        assertEquals(result1, "HELLO test_file.txt, content1");
+
+        HttpRequest request2 = requestList.get(1);
+        HttpResponse response2 = new HttpResponse();
+        service.service(request2, response2);
+        String result2 = FileUtil.read("test_file.txt");
+        assertEquals(result2, "HELLO test_file.txt, content2");
     }
 
 } 

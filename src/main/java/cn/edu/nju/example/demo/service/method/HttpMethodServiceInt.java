@@ -7,7 +7,7 @@ public interface HttpMethodServiceInt {
     /**
      * 根据各方法分别处理
      *
-     * @return Content-Length 是否需要修改
+     * @return 根据 content 设置头部 Content-Length
      */
     boolean process(HttpRequest request, HttpResponse response);
 }
