@@ -10,8 +10,6 @@ import java.util.Map;
 
 public class HttpHeaders {
 
-    public static final HttpHeaders defaultHeaders = new HttpHeaders();
-
     /**
      * 指定request的header内容
      */

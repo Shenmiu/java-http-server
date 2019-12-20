@@ -28,4 +28,25 @@ public class HttpContent {
     public void setContent(String content) {
         this.content = ByteBuffer.wrap(content.getBytes(StandardCharsets.UTF_8));
     }
+
+    /**
+     * 获取buffer的length
+     *
+     * @return int
+     */
+    public int size() {
+        if (content == null || content.limit() == 0) {
+            return 0;
+        }
+        return content.limit();
+    }
+
+    /**
+     * 判断buffer是否为空
+     *
+     * @return int
+     */
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 }

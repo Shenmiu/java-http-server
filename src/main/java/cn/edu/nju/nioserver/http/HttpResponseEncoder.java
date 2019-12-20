@@ -42,9 +42,28 @@ public class HttpResponseEncoder {
                     encodeResponseHeaders(response, curContent);
 
                     if (response.headers().containsContentLength()) {
-                        curState = State.ENCODE_FIXED_LENGTH_CONTENT;
+                        if (response.headers().get(HttpHeaderNames.CONTENT_LENGTH).equals("0")) {
+                            //content-length为0
+                            target.addAll(curContent);
+
+                            //reset
+                            reset();
+                            curContent.clear();
+                            //结束当前解析
+                            isEnd = true;
+                        } else {
+                            curState = State.ENCODE_FIXED_LENGTH_CONTENT;
+                        }
                     } else if (response.headers().isChunkTransfer()) {
                         curState = State.ENCODE_VARIABLE_LENGTH_CONTENT;
+                    } else {
+                        target.addAll(curContent);
+
+                        //reset
+                        reset();
+                        curContent.clear();
+                        //结束当前解析
+                        isEnd = true;
                     }
 
                     break;
@@ -60,6 +79,7 @@ public class HttpResponseEncoder {
 
                     //reset
                     reset();
+                    curContent.clear();
                     //结束当前解析
                     isEnd = true;
                     break;
@@ -76,7 +96,7 @@ public class HttpResponseEncoder {
                     //不确定当前已判断为HttpResponse中HttpContent是否有数据
                     //可能已经放入了第一个块
                     HttpResponse response = (HttpResponse) message;
-                    if (response.content() != null) {
+                    if (response.content() != null && !response.content().isEmpty()) {
                         encodeChunkContent(((HttpResponse) message).content(), curContent);
 
                         target.addAll(curContent);
@@ -169,7 +189,6 @@ public class HttpResponseEncoder {
      */
     private void encodeResponseContent(HttpResponse response, List<Byte> curContent) {
         ByteBuffer content = response.content().byteBuffer();
-
         //先写入content，后面依据状态写入下一层
         addContent(content.array(), curContent);
     }

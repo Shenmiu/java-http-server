@@ -70,6 +70,11 @@ public class HttpRequestDecoder {
                         }
                     } else if (HttpHeaders.isChunkTransfer(curRequest)) {
                         currentState = State.READ_VARIABLE_LENGTH_CONTENT;
+                    } else {
+                        //Content-Length || Transfer-encoding
+                        requests.add(curRequest);
+                        //reset
+                        reset();
                     }
                     break;
                 }
