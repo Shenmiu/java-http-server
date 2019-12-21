@@ -1,0 +1,6 @@
+You have send a post request with content type = application/x-www-form-urlencoded.
+The data is: 
+name: Charles
+age: 22
+sex: Male
+date: 2019-12-21T11:24:11.124Z
