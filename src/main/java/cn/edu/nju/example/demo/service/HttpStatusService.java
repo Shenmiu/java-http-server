@@ -20,6 +20,7 @@ public class HttpStatusService implements HttpService {
         HttpHeaders headers = response.headers();
         switch (status) {
             case "200":
+                headers.set(HttpHeaderNames.CONNECTION,HttpHeaderValues.KEEP_ALIVE);
                 response.setStatus(HttpResponseStatus.valueOf(200));
                 break;
             case "301":
@@ -27,11 +28,12 @@ public class HttpStatusService implements HttpService {
                 headers.set(HttpHeaderNames.LOCATION, "http://localhost:8080/status/200");
                 break;
             case "404":
+                headers.set(HttpHeaderNames.CONNECTION,HttpHeaderValues.KEEP_ALIVE);
                 response.setStatus(HttpResponseStatus.valueOf(404));
                 break;
             case "500":
                 headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
-                headers.set("Error Message", "An error has occurred");
+                headers.set("Error Message", "An error has occurred on the server");
                 response.setStatus(HttpResponseStatus.valueOf(500));
                 break;
         }
@@ -40,7 +42,6 @@ public class HttpStatusService implements HttpService {
                 .append(response.status().codeAsText()).append(" ")
                 .append(response.status().reasonPhrase()).append("<br/>");
         headers.set(HttpHeaderNames.CONTENT_LANGUAGE, "zh-CN");
-
         headers.set(HttpHeaderNames.CONTENT_LENGTH, "0");
         headers.set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
         Iterator<Map.Entry<String, String>> headersIterator = headers.headersIterator();
@@ -70,7 +71,5 @@ public class HttpStatusService implements HttpService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 设置响应的 content-length
-
     }
 }
