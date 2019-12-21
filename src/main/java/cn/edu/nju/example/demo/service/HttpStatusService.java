@@ -18,9 +18,6 @@ public class HttpStatusService implements HttpService {
         String[] split = request.uri().split("/");
         String status = split[split.length - 1];
         switch (status) {
-            case "101":
-                response.setStatus(HttpResponseStatus.valueOf(101));
-                break;
             case "200":
                 response.setStatus(HttpResponseStatus.valueOf(200));
                 break;
