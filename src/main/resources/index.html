@@ -1,73 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>HTTP 服务器场景展示</title>
-    <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
-    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
-    <script src="https://cdn.bootcss.com/qs/6.9.0/qs.min.js"></script>
-    <script src="https://cdn.bootcss.com/fetch/3.0.0/fetch.min.js"></script>
+  <meta charset="UTF-8">
+  <title>HTTP 服务器场景展示</title>
+  <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
+  <script src="https://cdn.bootcss.com/qs/6.9.0/qs.min.js"></script>
+  <script src="https://cdn.bootcss.com/fetch/3.0.0/fetch.min.js"></script>
 </head>
 <body>
 <h1>HTTP 方法展示</h1>
 <ul>
-    <li><a href="localhost:8080/method/get">GET</a></li>
-    <li><a href="localhost:8080/method/post">POST</a></li>
-    <li><a href="localhost:8080/method/put">PUT</a></li>
-    <li><a href="localhost:8080/method/patch">PATCH</a></li>
-    <li><a href="localhost:8080/method/delete">DELETE</a></li>
-    <li><a href="localhost:8080/method/trace">TRACE</a></li>
-    <li><a href="localhost:8080/method/connect">CONNECT</a></li>
-    <li><a href="localhost:8080/method/head">HEAD</a></li>
-    <li><a href="localhost:8080/method/options">OPTIONS</a></li>
+  <li>
+    <button id="method-get">get</button>
+    <span id="method-get-content"></span>
+  </li>
+  <li>
+    <button id="method-post">post</button>
+    <span id="method-post-content"></span>
+  </li>
+  <li>
+    <button id="method-put">put</button>
+    <span id="method-put-content"></span>
+  </li>
+  <li>
+    <button id="method-delete">delete</button>
+    <span id="method-delete-content"></span>
+  </li>
+  <li>
+    <button id="method-head">head</button>
+    <span id="method-head-content"></span>
+  </li>
+  <li>
+    <button id="method-options">option</button>
+    <span id="method-options-content"></span>
+  </li>
+<!--  <li>-->
+<!--    <button id="method-trace">trace</button>-->
+<!--    <span id="method-trace-content"></span>-->
+<!--  </li>-->
 </ul>
 <h1>HTTP 响应码展示</h1>
 <ul>
-    <li><a href="http://localhost:8080/status/200">200</a></li>
-    <li><a href="http://localhost:8080/status/301">301</a></li>
-    <li><a href="http://localhost:8080/status/404">404</a></li>
-    <li><a href="http://localhost:8080/status/500">500</a></li>
+  <li><a href="http://localhost:8080/status/200">200</a></li>
+  <li><a href="http://localhost:8080/status/301">301</a></li>
+  <li><a href="http://localhost:8080/status/404">404</a></li>
+  <li><a href="http://localhost:8080/status/500">500</a></li>
 </ul>
 <h1>MIME 类型展示</h1>
 <ul>
-    <li><a href="http://localhost:8080/mime/image/hello.jpg">image/jpeg</a></li>
-    <img style="margin: auto;height: 200px; width: 200px" src="http://localhost:8080/mime/image/hello.jpg">
-    <li><a href="http://localhost:8080/mime/image/bye.gif">image/gif</a></li>
-    <img style="margin: auto;height: 200px; width: 200px" src="http://localhost:8080/mime/image/bye.gif">
-    <li><a href="http://localhost:8080/mime/text/text.plain">text/plain 点我试试</a></li>
-    <li><a href="http://localhost:8080/mime/text/text.html">text/html 点我试试</a></li>
-   <li><a href="http://localhost:8080/mime/video/movie.mp4">video/mp4 点我试试</a></li>
-    <video src="http://localhost:8080/mime/video/movie.mp4" controls="controls">
-        您的浏览器不支持 video 标签。
-    </video>
+  <li><a href="http://localhost:8080/mime/image/hello.jpg">image/jpeg</a></li>
+  <img style="margin: auto;height: 200px; width: 200px" src="http://localhost:8080/mime/image/hello.jpg">
+  <li><a href="http://localhost:8080/mime/image/bye.gif">image/gif</a></li>
+  <img style="margin: auto;height: 200px; width: 200px" src="http://localhost:8080/mime/image/bye.gif">
+  <li><a href="http://localhost:8080/mime/text/text.plain">text/plain 点我试试</a></li>
+  <li><a href="http://localhost:8080/mime/text/text.html">text/html 点我试试</a></li>
+  <li><a href="http://localhost:8080/mime/video/movie.mp4">video/mp4 点我试试</a></li>
+  <video src="http://localhost:8080/mime/video/movie.mp4" controls="controls">
+    您的浏览器不支持 video 标签。
+  </video>
 </ul>
 <div>
 
 </div>
 <h1>Http 内容编码展示</h1>
 <ul>
-    <li>
-        <button id="gzip">gzip</button>
-        <span id="gzip-content">等下这里会显示 gzip 的内容</span>
-    </li>
+  <li>
+    <button id="gzip">gzip</button>
+    <span id="gzip-content">等下这里会显示 gzip 的内容</span>
+  </li>
 </ul>
 <h1>Http Cookie 展示</h1>
 <h2>会话 Cookie 展示</h2>
 <span>当前登录用户为: </span>
 <span id="session-cookie-username"></span>
 <label>
-    <input id="session-cookie-input" name="name" type="text">
+  <input id="session-cookie-input" name="name" type="text">
 </label>
 <button id="session-cookie-login">登录</button>
 <h1>Http 分块展示</h1>
 <ul>
-    <li>
-        <button id="chunk">chunk</button>
-    </li>
-    <li>
-        <span id="chunk-content">chunk 内容将在此处展示</span>
-    </li>
+  <li>
+    <button id="chunk">chunk</button>
+  </li>
+  <li>
+    <span id="chunk-content">chunk 内容将在此处展示</span>
+  </li>
 </ul>
 <script>
     axios.baseURL = "http://localhost:8080";
@@ -78,10 +97,86 @@
         if (typeof username !== "undefined") {
             $("#session-cookie-username").text(username);
         }
+
+        $("#method-get").click(method_get);
+        $("#method-post").click(method_post);
+        $("#method-put").click(method_put);
+        $("#method-delete").click(method_delete);
+        $("#method-head").click(method_head);
+        $("#method-options").click(method_options);
+
         $("#gzip").click(gzip);
         $("#chunk").click(chunk);
         $("#session-cookie-login").click(session_cookie_login);
     });
+
+    function method_get() {
+        axios.get('/method/get_file.txt').then(function (response) {
+            $("#method-get-content").text(response.data);
+        }).catch(function (error) {
+            // console.log(error);
+            $("#method-get-content").text("");
+        });
+    }
+
+    function method_post() {
+        axios.post('/method/post_file.txt', Qs.stringify({
+            name: "Charles",
+            age: 22,
+            sex: "Male",
+            date: new Date(),
+        })).then(function (response) {
+            $("#method-post-content").text(response.data);
+        }).catch(function (error) {
+            // console.log(error);
+            $("#method-post-content").text("");
+        });
+    }
+
+    function method_put() {
+        axios.put('/method/put_file.txt', Qs.stringify({
+            name: Math.random() * 100,
+            date: new Date(),
+        })).then(function (response) {
+            $("#method-put-content").text(response.data);
+        }).catch(function (error) {
+            // console.log(error);
+            $("#method-put-content").text("");
+        });
+    }
+
+    function method_delete() {
+        axios.delete('/method/post_file.txt').then(function (response) {
+            $("#method-delete-content").text("DELETE 的响应状态码为：" + response.status);
+        }).catch(function (error) {
+            // console.log(error);
+            // TODO jy 不返回
+            $("#method-delete-content").text("");
+        });
+    }
+
+    function method_head() {
+        axios.head('/method/get_file.txt').then(function (response) {
+            console.log(response)
+            // TODO jy 不返回
+            $("#method-head-content").text("HEAD 的响应头部 Content-Length 为：" + response.headers['content-length']);
+        }).catch(function (error) {
+            // console.log(error);
+            $("#method-head-content").text("");
+        });
+    }
+
+    function method_options() {
+        console.log("options click!!")
+        axios.options('/method/post_file.txt').then(function (response) {
+            // TODO jy
+            console.log(response)
+            $("#method-options-content").text("HEAD 的响应头部 Allow 为：" + response.headers['Allow']);
+        }).catch(function (error) {
+            // console.log(error);
+            $("#method-options-content").text("");
+        });
+    }
 
     function gzip() {
         console.log("click gzip");
@@ -133,7 +228,7 @@
     }
 
     function chunk() {
-        console.log("click gzip");
+        console.log("click chunk");
         $("#chunk-content").text("");
         var lastIndex = 0;
         var query = new XMLHttpRequest();

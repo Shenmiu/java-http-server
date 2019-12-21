@@ -16,8 +16,7 @@ public class HttpMethodServiceDelete implements HttpMethodServiceInt {
         } else {
             // DELETE 方法成功执行，资源已被删除
             response.setStatus(HttpResponseStatus.NO_CONTENT);
-            boolean a = FileUtil.delete(curFileName);
-            System.out.println(a);
+            FileUtil.delete(curFileName);
         }
         return false;
     }

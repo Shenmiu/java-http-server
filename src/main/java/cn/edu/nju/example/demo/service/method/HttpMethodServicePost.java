@@ -29,7 +29,7 @@ public class HttpMethodServicePost implements HttpMethodServiceInt {
         String plainText = new String(contentBuf.array(), 0, contentBuf.array().length, StandardCharsets.UTF_8);
         processData(request, response,
                 "You have send a post request with content type = text/plain.\n" +
-                        "The plain text is: " + plainText);
+                        "The plain text is: " + plainText + "\n");
     }
 
     private void processAppFormUrlencoded(HttpRequest request, HttpResponse response) {
