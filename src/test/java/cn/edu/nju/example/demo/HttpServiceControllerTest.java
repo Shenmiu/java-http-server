@@ -1,6 +1,5 @@
 package cn.edu.nju.example.demo;
 
-import cn.edu.nju.example.HttpService;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpRequestDecoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
@@ -9,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +56,9 @@ public class HttpServiceControllerTest {
         encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        HttpService service = HttpServiceController.controller;
+        HttpServiceController service = HttpServiceController.controller;
         HttpResponse response = new HttpResponse();
-        service.service(request, response);
+//        service.service(request, response);
         String result = new String(response.content().byteBuffer().array(), StandardCharsets.UTF_8);
         assertEquals(result, "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
                 "The data is: \n" +
@@ -93,9 +91,9 @@ public class HttpServiceControllerTest {
         encoder.decode(buffer, requestList);
 
         HttpRequest request = requestList.get(0);
-        HttpService service = HttpServiceController.controller;
+//        HttpService service = HttpServiceController.controller;
         HttpResponse response = new HttpResponse();
-        service.service(request, response);
+//        service.service(request, response);
         assertEquals(response.status(), HttpResponseStatus.NOT_FOUND);
     }
 

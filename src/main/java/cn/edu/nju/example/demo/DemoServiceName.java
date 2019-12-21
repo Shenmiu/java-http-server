@@ -10,7 +10,8 @@ public enum DemoServiceName {
     STATUS("status"),
     MIME("mime"),
     CONTENT_ENCODING("content-encoding"),
-    COOKIE("cookie");
+    COOKIE("cookie"),
+    CHUNK("chunk");
 
     private String value;
 

@@ -1,4 +1,4 @@
-package cn.edu.nju.example;
+package cn.edu.nju.example.demo.service.intf;
 
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;

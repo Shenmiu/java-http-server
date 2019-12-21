@@ -1,6 +1,6 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.example.HttpService;
+import cn.edu.nju.example.demo.service.intf.HttpService;
 import cn.edu.nju.nioserver.http.*;
 
 import java.io.ByteArrayOutputStream;

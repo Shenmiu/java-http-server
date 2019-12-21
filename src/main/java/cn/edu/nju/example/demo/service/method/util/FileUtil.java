@@ -1,11 +1,13 @@
 package cn.edu.nju.example.demo.service.method.util;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import lombok.extern.log4j.Log4j2;
+
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 
+@Log4j2
 public class FileUtil {
 
     private static final String BASE_DIR = System.getProperty("user.dir") + "/data/";
@@ -81,4 +83,29 @@ public class FileUtil {
         }
     }
 
+    public static byte[] getResource(String resourceName) {
+        try {
+            FileInputStream is = new FileInputStream(getResourcePath(resourceName));
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[4096];
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                os.write(data, 0, nRead);
+            }
+            return os.toByteArray();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new byte[0];
+    }
+
+    private static String getResourcePath(String resourceName) {
+        String res = FileUtil.class.getClassLoader().getResource(resourceName).getPath();
+        if (null == res) {
+            log.debug("找不到资源文件: " + resourceName);
+        }
+        return res;
+    }
 }

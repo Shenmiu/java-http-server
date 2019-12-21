@@ -5,7 +5,7 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 
 public class HttpMethodServiceTrace implements HttpMethodServiceInt {
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
-
+    public boolean process(HttpRequest request, HttpResponse response) {
+        return false;
     }
 }

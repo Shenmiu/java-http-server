@@ -6,7 +6,6 @@ import cn.edu.nju.nioserver.http.HttpResponse;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

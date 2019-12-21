@@ -1,6 +1,6 @@
 package cn.edu.nju.example.demo.service;
 
-import cn.edu.nju.example.HttpService;
+import cn.edu.nju.example.demo.service.intf.HttpService;
 import cn.edu.nju.example.demo.service.method.util.FileUtil;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpRequestDecoder;
@@ -72,18 +72,6 @@ public class HttpMethodServiceTest {
                 "The data is: \n" +
                 "name: Professional Ajax\n" +
                 "publisher: Wiley\n");
-
-        HttpRequest request2 = requestList.get(1);
-        HttpResponse response2 = new HttpResponse();
-        service.service(request2, response2);
-        String result2 = new String(response2.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result2, "HELLO post_file.txt, content2\n" +
-                "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
-                "The data is: \n" +
-                "name: Professional Ajax\n" +
-                "publisher: Wiley\n" +
-                "You have send a post request with content type = text/plain.\n" +
-                "The plain text is: name=hello&kitty=biu");
     }
 
     @Test
