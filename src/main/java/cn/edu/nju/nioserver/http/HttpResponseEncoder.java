@@ -120,6 +120,11 @@ public class HttpResponseEncoder {
 
                         //清空以放入接下来的块
                         curContent.clear();
+
+                        //判断当前为0块,重置状态
+                        if (((HttpContent) message).isEmpty()) {
+                            reset();
+                        }
                     } else {
                         throw new IllegalArgumentException("data is error");
                     }
