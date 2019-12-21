@@ -25,7 +25,7 @@ public class HttpMethodServicePut implements HttpMethodServiceInt {
         }
         FileUtil.write(curFileName, contentStr, true);
         response.headers().set(HttpHeaderNames.CONTENT_LOCATION, curFileName);
-        return false;
+        return true;
 
     }
 }

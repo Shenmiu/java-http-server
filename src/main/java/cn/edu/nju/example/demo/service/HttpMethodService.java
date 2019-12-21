@@ -18,8 +18,12 @@ public class HttpMethodService implements HttpService {
 
         if (contentLengthToModify) {
             // 设置响应的 content-length
-            response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                    String.valueOf(response.content().byteBuffer().array().length));
+            if (response.content() == null || response.content().byteBuffer() == null) {
+                response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "0");
+            } else {
+                response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+                        String.valueOf(response.content().byteBuffer().array().length));
+            }
         }
     }
 

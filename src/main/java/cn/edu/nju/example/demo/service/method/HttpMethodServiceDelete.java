@@ -18,6 +18,6 @@ public class HttpMethodServiceDelete implements HttpMethodServiceInt {
             response.setStatus(HttpResponseStatus.NO_CONTENT);
             FileUtil.delete(curFileName);
         }
-        return false;
+        return true;
     }
 }

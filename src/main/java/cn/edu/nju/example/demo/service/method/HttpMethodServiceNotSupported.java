@@ -9,6 +9,6 @@ public class HttpMethodServiceNotSupported implements HttpMethodServiceInt {
     public boolean process(HttpRequest request, HttpResponse response) {
         response.content().setContent("You have send a request with a http method not supported.");
         response.setStatus(HttpResponseStatus.METHOD_NOT_ALLOWED);
-        return false;
+        return true;
     }
 }

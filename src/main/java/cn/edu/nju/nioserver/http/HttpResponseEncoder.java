@@ -193,9 +193,11 @@ public class HttpResponseEncoder {
      * @param curContent 当前的字节流
      */
     private void encodeResponseContent(HttpResponse response, List<Byte> curContent) {
-        ByteBuffer content = response.content().byteBuffer();
-        //先写入content，后面依据状态写入下一层
-        addContent(content.array(), curContent);
+        if (!response.content().isEmpty()) {
+            ByteBuffer content = response.content().byteBuffer();
+            //先写入content，后面依据状态写入下一层
+            addContent(content.array(), curContent);
+        }
     }
 
     /**
@@ -247,7 +249,7 @@ public class HttpResponseEncoder {
      * 添加分隔符
      */
     private void addSeparator(List<Byte> curContent) {
-        byte[] separator = new String("\r\n").getBytes(StandardCharsets.UTF_8);
+        byte[] separator = "\r\n".getBytes(StandardCharsets.UTF_8);
         for (byte e : separator) {
             curContent.add(e);
         }

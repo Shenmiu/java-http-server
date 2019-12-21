@@ -3,4 +3,6 @@ The data is:
 name: Charles
 age: 22
 sex: Male
-date: 2019-12-21T11:24:11.124Z
+date: 2019-12-21T12:25:31.796Z
+You have send a post request with content type = text/plain.
+The plain text is: name=Charles&age=22&sex=Male&date=2019-12-21T12%3A25%3A32.959Z

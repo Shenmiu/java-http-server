@@ -59,13 +59,13 @@
 <h1>MIME 类型展示</h1>
 <ul>
   <li><a href="http://localhost:8080/mime/image/hello.jpg">image/jpeg</a></li>
-  <img style="margin: auto;height: 200px; width: 200px" src="http://localhost:8080/mime/image/hello.jpg">
+  <img src="http://localhost:8080/mime/image/hello.jpg" style="margin: auto;height: 200px; width: 200px">
   <li><a href="http://localhost:8080/mime/image/bye.gif">image/gif</a></li>
-  <img style="margin: auto;height: 200px; width: 200px" src="http://localhost:8080/mime/image/bye.gif">
+  <img src="http://localhost:8080/mime/image/bye.gif" style="margin: auto;height: 200px; width: 200px">
   <li><a href="http://localhost:8080/mime/text/text.plain">text/plain 点我试试</a></li>
   <li><a href="http://localhost:8080/mime/text/text.html">text/html 点我试试</a></li>
   <li><a href="http://localhost:8080/mime/video/movie.mp4">video/mp4 点我试试</a></li>
-  <video src="http://localhost:8080/mime/video/movie.mp4" controls="controls">
+  <video controls="controls" src="http://localhost:8080/mime/video/movie.mp4">
     您的浏览器不支持 video 标签。
   </video>
 </ul>
@@ -166,7 +166,7 @@
             name: Math.random() * 100,
             date: new Date(),
         })).then(function (response) {
-            $("#method-put-content").text(response.data);
+            $("#method-put-content").text("PUT 的响应状态码为：" + response.status);
         }).catch(function (error) {
             // console.log(error);
             $("#method-put-content").text("");
@@ -175,17 +175,16 @@
 
     function method_delete() {
         axios.delete('/method/post_file.txt').then(function (response) {
-            $("#method-delete-content").text("DELETE 的响应状态码为：" + response.status);
+            $("#method-delete-content").text("DELETE 成功，响应状态码为：" + response.status);
         }).catch(function (error) {
-            // console.log(error);
-            // TODO jy 不返回
-            $("#method-delete-content").text("");
+            $("#method-delete-content").text("DELETE 失败，响应状态码为：" + error.response.status);
+            console.log(error);
         });
     }
 
     function method_head() {
         axios.head('/method/get_file.txt').then(function (response) {
-            console.log(response)
+            console.log(response);
             // TODO jy 不返回
             $("#method-head-content").text("HEAD 的响应头部 Content-Length 为：" + response.headers['content-length']);
         }).catch(function (error) {
@@ -195,11 +194,10 @@
     }
 
     function method_options() {
-        console.log("options click!!")
         axios.options('/method/post_file.txt').then(function (response) {
             // TODO jy
-            console.log(response)
-            $("#method-options-content").text("HEAD 的响应头部 Allow 为：" + response.headers['Allow']);
+            console.log(response);
+            $("#method-options-content").text("HEAD 的响应头部 Allow 为：" + response.headers['allow']);
         }).catch(function (error) {
             // console.log(error);
             $("#method-options-content").text("");
@@ -207,17 +205,15 @@
     }
 
     function method_not_supported() {
-        console.log("not supported click!!")
+        console.log("not supported click!!");
         axios({
             method: 'kkmethod',
             url: '/method/post_file.txt',
         }).then(function (response) {
-            // TODO jy
-            console.log(response)
-            $("#method-options-content").text("HEAD 的响应头部 Allow 为：" + response.headers['Allow']);
+            // console.log(response)
         }).catch(function (error) {
             // console.log(error);
-            $("#method-options-content").text("");
+            $("#method-not-supported-content").text("不支持的 HTTP Method kkmethod 响应状态码为：" + error.response.status);
         });
     }
 
