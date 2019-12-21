@@ -17,17 +17,21 @@ public class HttpStatusService implements HttpService {
         // TODO hgc
         String[] split = request.uri().split("/");
         String status = split[split.length - 1];
+        HttpHeaders headers = response.headers();
         switch (status) {
             case "200":
                 response.setStatus(HttpResponseStatus.valueOf(200));
                 break;
             case "301":
                 response.setStatus(HttpResponseStatus.valueOf(301));
+                headers.set(HttpHeaderNames.LOCATION, "http://localhost:8080/status/200");
                 break;
             case "404":
                 response.setStatus(HttpResponseStatus.valueOf(404));
                 break;
             case "500":
+                headers.set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+                headers.set("Error Message", "An error has occurred");
                 response.setStatus(HttpResponseStatus.valueOf(500));
                 break;
         }
@@ -35,7 +39,8 @@ public class HttpStatusService implements HttpService {
         responseBuilder.append(response.version().text()).append(" ")
                 .append(response.status().codeAsText()).append(" ")
                 .append(response.status().reasonPhrase()).append("<br/>");
-        HttpHeaders headers = response.headers();
+        headers.set(HttpHeaderNames.CONTENT_LANGUAGE, "zh-CN");
+
         headers.set(HttpHeaderNames.CONTENT_LENGTH, "0");
         headers.set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
         Iterator<Map.Entry<String, String>> headersIterator = headers.headersIterator();
@@ -55,13 +60,17 @@ public class HttpStatusService implements HttpService {
                 indexBuf.rewind();
             }
             result.insert(result.indexOf("</div>"), responseBuilder.toString());
+            int contextLength = result.toString().getBytes().length;
+            String contextLengthStr = String.valueOf(contextLength);
+            contextLength += contextLengthStr.getBytes().length - "0".getBytes().length;
+            result.replace(result.indexOf("0<"), result.indexOf("<br/>D"), String.valueOf(contextLength));
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(contextLength));
             response.content().setContent(result.toString());
             statusChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         // 设置响应的 content-length
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                String.valueOf(response.content().byteBuffer().array().length));
+
     }
 }
