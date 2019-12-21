@@ -19,7 +19,7 @@ public class HttpChunkService {
         log.info("========模拟 chunk 分块开始========");
         HttpResponse response = new HttpResponse();
         response.setStatus(HttpResponseStatus.OK);
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN);
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
         response.headers().set(HttpHeaderNames.TRANSFER_ENCODING, HttpHeaderValues.CHUNKED);
         ctx.sendDownStream(response);
         try {

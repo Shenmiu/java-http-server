@@ -5,6 +5,9 @@
     <title>HTTP 服务器场景展示</title>
     <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
+    <script src="https://cdn.bootcss.com/qs/6.9.0/qs.min.js"></script>
+    <script src="https://cdn.bootcss.com/fetch/3.0.0/fetch.min.js"></script>
 </head>
 <body>
 <h1>HTTP 方法展示</h1>
@@ -40,16 +43,12 @@
 </ul>
 <h1>Http Cookie 展示</h1>
 <h2>会话 Cookie 展示</h2>
-<form action="localhost:8080/cookie/session" method="post">
-    <label>
-        <input name="name" type="text">
-    </label>
-    <input type="submit" value="登录">
-</form>
-<h2>持久化 Cookie 展示</h2>
-<ul>
-    <li><a href="localhost:8080/cookie/permanent">持久化 Cookie</a></li>
-</ul>
+<span>当前登录用户为: </span>
+<span id="session-cookie-username"></span>
+<label>
+    <input id="session-cookie-input" name="name" type="text">
+</label>
+<button id="session-cookie-login">登录</button>
 <h1>Http 分块展示</h1>
 <ul>
     <li>
@@ -61,10 +60,16 @@
 </ul>
 <script>
     axios.baseURL = "http://localhost:8080";
+    axios.defaults.withCredentials = true;
     // axios.defaults.headers.common['Origin'] = 'http://localhost';
     $(document).ready(function () {
+        var username = Cookies.get('username');
+        if (typeof username !== "undefined") {
+            $("#session-cookie-username").text(username);
+        }
         $("#gzip").click(gzip);
         $("#chunk").click(chunk);
+        $("#session-cookie-login").click(session_cookie_login);
     });
 
     function gzip() {
@@ -85,22 +90,54 @@
             });
     }
 
+    function session_cookie_login() {
+        console.log("click session cookie login");
+        let username = $("#session-cookie-input").val();
+        console.log("username:" + username);
+        let data = "username=" + username;
+        axios({
+            method: 'post',
+            url: '/cookie/session',
+            data: data,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            withCredentials: true
+        }).then(function (response) {
+            // handle success
+            console.log(response);
+            console.log(response.headers['set-cookie']);
+
+            console.log(document.cookie);
+            console.log(Cookies.get());
+            console.log(Cookies.get('username'));
+            var username = Cookies.get('username');
+            if (typeof username !== "undefined") {
+                $("#session-cookie-username").text(username);
+            }
+        }).catch(function (error) {
+            // handle error
+            console.log(error);
+        }).finally(function () {
+            // always executed
+        });
+    }
+
     function chunk() {
         console.log("click gzip");
-        // Make a request for a user with a given ID
-        axios.get('/chunk')
-            .then(function (response) {
-                // handle success
-                console.log(response);
-                $("#chunk-content").text(response.data);
-            })
-            .catch(function (error) {
-                // handle error
-                console.log(error);
-            })
-            .finally(function () {
-                // always executed
-            });
+        $("#chunk-content").text("");
+        var lastIndex = 0;
+        var query = new XMLHttpRequest();
+
+        query.onreadystatechange = function () {
+            if (query.readyState === 3) {
+                //每次返回的数据responseText会包含上次的数据，所以需要手动substring一下
+                var info = query.responseText.substring(lastIndex);
+                $('#chunk-content').append('<div>' + info + '</div>');
+
+                lastIndex = query.responseText.length;
+            }
+        };
+        query.open("GET", "http://localhost:8080/chunk", true);
+        query.send(null);
     }
 </script>
 </body>

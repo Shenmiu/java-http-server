@@ -17,7 +17,7 @@ public class HttpServerInitializer implements ChannelPipelineFactory {
     public ChannelPipeline getPipeline() {
         ChannelPipeline pipeline = new ChannelPipeline();
         pipeline.add(new HttpMessageCodec());
-        pipeline.add(HttpServiceController.controller);
+        pipeline.add(new HttpServiceController());
         return pipeline;
     }
 }

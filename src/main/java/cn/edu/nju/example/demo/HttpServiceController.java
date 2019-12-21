@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 @Log4j2
 public class HttpServiceController implements ChannelHandler {
 
-    public static final HttpServiceController controller = new HttpServiceController();
     private static final HttpChunkService chunkService = new HttpChunkService();
     public static Map<DemoServiceName, HttpService> services;
 
@@ -32,10 +31,10 @@ public class HttpServiceController implements ChannelHandler {
         HttpServiceController.services.put(DemoServiceName.STATUS, new HttpStatusService());
         HttpServiceController.services.put(DemoServiceName.MIME, new HttpMimeService());
         HttpServiceController.services.put(DemoServiceName.CONTENT_ENCODING, new HttpContentEncodingService());
-//        HttpServiceController.services.put(DemoServiceName.COOKIE, new HttpCookieService());
+        HttpServiceController.services.put(DemoServiceName.COOKIE, new HttpCookieService());
     }
 
-    private HttpServiceController() {
+    public HttpServiceController() {
     }
 
     @Override

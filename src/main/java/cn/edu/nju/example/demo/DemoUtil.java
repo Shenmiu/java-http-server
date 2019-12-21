@@ -10,5 +10,5 @@ import java.util.regex.Pattern;
  * @date 2019/12/20
  */
 public class DemoUtil {
-    public static final Pattern DEMO_URI_PATTERN = Pattern.compile("^/([a-zA-Z0-9-._~!$&'()*+,;=:]*)/?(.*)$");
+    public static final Pattern DEMO_URI_PATTERN = Pattern.compile("^/([a-zA-Z0-9-._~!$&'()*+,;=:]*)?/?(.*)$");
 }
