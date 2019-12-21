@@ -104,7 +104,7 @@ public class FileUtil {
             FileInputStream is = new FileInputStream(getResourcePath(resourceName));
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             int nRead;
-            byte[] data = new byte[4096];
+            byte[] data = new byte[409600];
             while ((nRead = is.read(data, 0, data.length)) != -1) {
                 os.write(data, 0, nRead);
             }

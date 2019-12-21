@@ -1,10 +1,7 @@
 package cn.edu.nju.example.demo.service;
 
 import cn.edu.nju.example.demo.service.intf.HttpService;
-import cn.edu.nju.nioserver.http.HttpHeaderNames;
-import cn.edu.nju.nioserver.http.HttpRequest;
-import cn.edu.nju.nioserver.http.HttpResponse;
-import cn.edu.nju.nioserver.http.HttpResponseStatus;
+import cn.edu.nju.nioserver.http.*;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -21,9 +18,6 @@ public class HttpStatusService implements HttpService {
         String[] split = request.uri().split("/");
         String status = split[split.length - 1];
         switch (status) {
-            case "101":
-                response.setStatus(HttpResponseStatus.valueOf(101));
-                break;
             case "200":
                 response.setStatus(HttpResponseStatus.valueOf(200));
                 break;
@@ -38,8 +32,13 @@ public class HttpStatusService implements HttpService {
                 break;
         }
         StringBuilder responseBuilder = new StringBuilder();
-        responseBuilder.append(response.version().text()).append(" ").append(response.status().codeAsText()).append("<br/>");
-        Iterator<Map.Entry<String, String>> headersIterator = response.headers().headersIterator();
+        responseBuilder.append(response.version().text()).append(" ")
+                .append(response.status().codeAsText()).append(" ")
+                .append(response.status().reasonPhrase()).append("<br/>");
+        HttpHeaders headers = response.headers();
+        headers.set(HttpHeaderNames.CONTENT_LENGTH, "0");
+        headers.set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        Iterator<Map.Entry<String, String>> headersIterator = headers.headersIterator();
         while (headersIterator.hasNext()) {
             Map.Entry<String, String> entry = headersIterator.next();
             responseBuilder.append(entry.getKey()).append(":").append(entry.getValue()).append("<br/>");
@@ -61,9 +60,6 @@ public class HttpStatusService implements HttpService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        System.out.println();
-
         // 设置响应的 content-length
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
                 String.valueOf(response.content().byteBuffer().array().length));

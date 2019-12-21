@@ -1,10 +1,15 @@
 package cn.edu.nju.example.demo.service;
 
 import cn.edu.nju.example.demo.service.intf.HttpService;
+import cn.edu.nju.example.demo.service.method.util.FileUtil;
 import cn.edu.nju.nioserver.http.HttpHeaderNames;
+import cn.edu.nju.nioserver.http.HttpHeaderValues;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpResponse;
 import sun.misc.BASE64Encoder;
+
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class HttpMimeService implements HttpService {
     static BASE64Encoder encoder = new sun.misc.BASE64Encoder();
@@ -12,30 +17,29 @@ public class HttpMimeService implements HttpService {
     @Override
     public void service(HttpRequest request, HttpResponse response) {
         String path = request.uri();
-        String fileName = "src/main/resources/" + path;
-        String type = path.substring(1);
-        String pre = type.split("/")[0];
-        String post = type.split("\\.")[type.split("\\.").length - 1];
-      /*
-        尝试将文件转为二进制进行传输
-         String biImage = "";
-        try {
-            BufferedImage bi = ImageIO.read(new File(fileName));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(bi, "jpg", baos);
-            byte[] bytes = baos.toByteArray();
-            biImage = encoder.encodeBuffer(bytes).trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        StringBuilder responseBuilder = new StringBuilder();
-        responseBuilder.append("You have get url with " + path + " and ")
-                .append("the mime type of file is " + pre + "/" + post);
-//            .append(biImage);
-        response.content().setContent(responseBuilder.toString());
+        String file = path.substring(6);
+//        String pre = type.split("/")[0];
+        String type = file.split("\\.")[file.split("\\.").length - 1];
+        byte[] data = FileUtil.getResource(file);
+        response.content().setByteBuffer(ByteBuffer.wrap(data));
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(data.length));
+        switch (type){
+            case "jpg":
+                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/jpeg");
+                break;
+            case "gif":
+                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/gif");
+                break;
+            case "html":
+                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html");
+                break;
+            case "plain":
+                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain");
+                break;
+            case "mp4":
+                response.headers().set(HttpHeaderNames.CONTENT_TYPE, "video/mp4");
+                break;
 
-        // 设置响应的 content-length
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                String.valueOf(response.content().byteBuffer().array().length));
+        }
     }
 }

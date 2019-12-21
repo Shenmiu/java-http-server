@@ -12,7 +12,7 @@ public class HttpIndexService implements HttpService {
 
     @Override
     public void service(HttpRequest request, HttpResponse response) {
-//        String indexContent = FileUtil.readResourceFile("index.html");
+//        String indexContent = FileUtil.readResourceFile("text.html");
         byte[] data = FileUtil.getResource("index.html");
 //        assert indexContent != null;
         response.content().setByteBuffer(ByteBuffer.wrap(data));
