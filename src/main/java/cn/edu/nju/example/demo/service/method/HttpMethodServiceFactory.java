@@ -5,9 +5,8 @@ import cn.edu.nju.nioserver.http.HttpMethod;
 public class HttpMethodServiceFactory {
 
     public static HttpMethodServiceInt getMethodService(HttpMethod method) {
-        if (method == HttpMethod.CONNECT) {
-            return new HttpMethodServiceConnect();
-        } else if (method == HttpMethod.DELETE) {
+        // 不支持 CONNECT 方法
+        if (method == HttpMethod.DELETE) {
             return new HttpMethodServiceDelete();
         } else if (method == HttpMethod.GET) {
             return new HttpMethodServiceGet();

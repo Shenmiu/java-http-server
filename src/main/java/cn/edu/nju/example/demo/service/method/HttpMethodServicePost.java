@@ -2,10 +2,7 @@ package cn.edu.nju.example.demo.service.method;
 
 import cn.edu.nju.example.demo.service.method.util.FileUtil;
 import cn.edu.nju.example.demo.service.method.util.QueryStringDecoder;
-import cn.edu.nju.nioserver.http.HttpHeaderNames;
-import cn.edu.nju.nioserver.http.HttpHeaderValues;
-import cn.edu.nju.nioserver.http.HttpRequest;
-import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.*;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -61,9 +58,13 @@ public class HttpMethodServicePost implements HttpMethodServiceInt {
         String curFileName = FileUtil.realFileName(request.uri());
         String wantedFilePreContent = FileUtil.read(curFileName);
         if (wantedFilePreContent == null) {
+            // 新资源被创建
             FileUtil.write(curFileName, content, true);
+            response.setStatus(HttpResponseStatus.CREATED);
         } else {
+            // 现有资源已被更改
             FileUtil.write(curFileName, content, false);
+            response.setStatus(HttpResponseStatus.OK);
         }
 
         String nowContent = FileUtil.read(curFileName);

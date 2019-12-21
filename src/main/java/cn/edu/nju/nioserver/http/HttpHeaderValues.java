@@ -18,6 +18,10 @@ public class HttpHeaderValues {
     public static final String APPLICATION_X_WWW_FORM_URLENCODED =
             "application/x-www-form-urlencoded";
     /**
+     * {@code "message-http"}
+     */
+    public static final String MESSAGE_HTTP = "message-http";
+    /**
      * {@code "base64"}
      */
     public static final String BASE64 = "base64";
