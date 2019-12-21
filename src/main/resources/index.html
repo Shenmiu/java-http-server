@@ -36,10 +36,14 @@
     <button id="method-options">option</button>
     <span id="method-options-content"></span>
   </li>
-<!--  <li>-->
-<!--    <button id="method-trace">trace</button>-->
-<!--    <span id="method-trace-content"></span>-->
-<!--  </li>-->
+  <li>
+    <button id="method-not-supported">not supported</button>
+    <span id="method-not-supported-content"></span>
+  </li>
+  <!--  <li>-->
+  <!--    <button id="method-trace">trace</button>-->
+  <!--    <span id="method-trace-content"></span>-->
+  <!--  </li>-->
 </ul>
 <h1>HTTP 响应码展示</h1>
 <ul>
@@ -104,6 +108,7 @@
         $("#method-delete").click(method_delete);
         $("#method-head").click(method_head);
         $("#method-options").click(method_options);
+        $("#method-not-supported").click(method_not_supported);
 
         $("#gzip").click(gzip);
         $("#chunk").click(chunk);
@@ -169,6 +174,21 @@
     function method_options() {
         console.log("options click!!")
         axios.options('/method/post_file.txt').then(function (response) {
+            // TODO jy
+            console.log(response)
+            $("#method-options-content").text("HEAD 的响应头部 Allow 为：" + response.headers['Allow']);
+        }).catch(function (error) {
+            // console.log(error);
+            $("#method-options-content").text("");
+        });
+    }
+
+    function method_not_supported() {
+        console.log("not supported click!!")
+        axios({
+            method: 'kkmethod',
+            url: '/method/post_file.txt',
+        }).then(function (response) {
             // TODO jy
             console.log(response)
             $("#method-options-content").text("HEAD 的响应头部 Allow 为：" + response.headers['Allow']);
