@@ -1,4 +1,3 @@
-HELLO post_file.txt, content2
 You have send a post request with content type = application/x-www-form-urlencoded.
 The data is: 
 name: Professional Ajax

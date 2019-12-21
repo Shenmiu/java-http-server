@@ -5,6 +5,7 @@ import cn.edu.nju.example.demo.service.method.util.FileUtil;
 import cn.edu.nju.nioserver.http.HttpRequest;
 import cn.edu.nju.nioserver.http.HttpRequestDecoder;
 import cn.edu.nju.nioserver.http.HttpResponse;
+import cn.edu.nju.nioserver.http.HttpResponseStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,15 @@ public class HttpMethodServiceTest {
     @Test
     public void testServicePost1() {
         String httpRequest =
-                "POST /method/post_file.txt HTTP/1.1\r\n" +
+                "DELETE /method/post_file.txt HTTP/1.1\r\n" +
+                        "Host:www.hostname.com\r\n" +
+                        "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
+                        "Content-Type:application/x-www-form-urlencoded\r\n" +
+                        "Content-Length:40\r\n" +
+                        "Connection: Keep-Alive\r\n" +
+                        "\r\n" +
+                        "name=Professional%20Ajax&publisher=Wiley" +
+                        "POST /method/post_file.txt HTTP/1.1\r\n" +
                         "Host:www.hostname.com\r\n" +
                         "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)\r\n" +
                         "Content-Type:application/x-www-form-urlencoded\r\n" +
@@ -63,15 +72,38 @@ public class HttpMethodServiceTest {
 
         HttpService service = new HttpMethodService();
 
-        HttpRequest request1 = requestList.get(0);
+        // delete an exist file
+        HttpRequest request0 = requestList.get(0);
+        HttpResponse response0 = new HttpResponse();
+        service.service(request0, response0);
+        assertEquals(response0.status(), HttpResponseStatus.NO_CONTENT);
+
+        // delete a not exist file
+        HttpResponse response01 = new HttpResponse();
+        service.service(request0, response01);
+        assertEquals(response01.status(), HttpResponseStatus.NOT_FOUND);
+
+        HttpRequest request1 = requestList.get(1);
         HttpResponse response1 = new HttpResponse();
         service.service(request1, response1);
         String result1 = new String(response1.content().byteBuffer().array(), StandardCharsets.UTF_8);
-        assertEquals(result1, "HELLO post_file.txt, content2\n" +
-                "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
+        assertEquals(response1.status(), HttpResponseStatus.CREATED);
+        assertEquals(result1, "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
                 "The data is: \n" +
                 "name: Professional Ajax\n" +
                 "publisher: Wiley\n");
+
+        HttpRequest request2 = requestList.get(2);
+        HttpResponse response2 = new HttpResponse();
+        service.service(request2, response2);
+        String result2 = new String(response2.content().byteBuffer().array(), StandardCharsets.UTF_8);
+        assertEquals(response2.status(), HttpResponseStatus.OK);
+        assertEquals(result2, "You have send a post request with content type = application/x-www-form-urlencoded.\n" +
+                "The data is: \n" +
+                "name: Professional Ajax\n" +
+                "publisher: Wiley\n" +
+                "You have send a post request with content type = text/plain.\n" +
+                "The plain text is: name=hello&kitty=biu");
     }
 
     @Test

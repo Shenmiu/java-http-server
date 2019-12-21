@@ -31,7 +31,9 @@ public class FileUtil {
         try {
             RandomAccessFile file = new RandomAccessFile
                     (FileUtil.class.getClassLoader().getResource(resourceFileName).getPath(), "r");
-            return readFileContent(file);
+            String content = readFileContent(file);
+            file.close();
+            return content;
         } catch (IOException e) {
             return null;
         }
@@ -43,12 +45,17 @@ public class FileUtil {
     public static String read(String fileName) {
         try {
             RandomAccessFile file = new RandomAccessFile(BASE_DIR + fileName, "r");
-            return readFileContent(file);
+            String content = readFileContent(file);
+            file.close();
+            return content;
         } catch (IOException e) {
             return null;
         }
     }
 
+    /**
+     * 读取文件内容
+     */
     private static String readFileContent(RandomAccessFile file) throws IOException {
         FileChannel channel = file.getChannel();
         ByteBuffer buf = ByteBuffer.allocate(512);
@@ -77,10 +84,19 @@ public class FileUtil {
             }
             channel.write(ByteBuffer.wrap(content.getBytes()));
             channel.close();
+            file.close();
             return true;
         } catch (IOException e) {
             return false;
         }
+    }
+
+    /**
+     * 删除文件
+     */
+    public static boolean delete(String fileName) {
+        File toDelete = new File(BASE_DIR + fileName);
+        return toDelete.delete();
     }
 
     public static byte[] getResource(String resourceName) {
